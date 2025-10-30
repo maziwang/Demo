@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>职位申请 - 未来科技招聘平台</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        /* 移动端页面宽度铺满 */
+        body {
+            width: 100%;
+            margin: 0;
+            position: relative;
+        }
+        /* 确保main内容区域也铺满宽度 */
+        main {
+            width: 100%;
+            margin: 0;
+        }
+    </style>
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            pink: '#ff2a6d',
+                            blue: '#05d9e8',
+                            green: '#01ffc3',
+                            yellow: '#fee440'
+                        },
+                        dark: {
+                            base: '#0d0221',
+                            card: '#1a0b2e',
+                            surface: '#2d1b50',
+                            border: '#5c27fe'
+                        }
+                    },
+                    fontFamily: {
+                        cyber: ['Rajdhani', 'sans-serif'],
+                        future: ['Orbitron', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%': { textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff2a6d, 0 0 20px #ff2a6d' },
+                            '100%': { textShadow: '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #05d9e8, 0 0 40px #05d9e8' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow-neon {
+                text-shadow: 0 0 5px currentColor;
+            }
+            .border-neon {
+                box-shadow: 0 0 5px currentColor;
+            }
+            .bg-noise {
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+                background-blend-mode: overlay;
+                background-size: 200px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(12px);
+                background-color: rgba(13, 2, 33, 0.7);
+            }
+            .hover-scale {
+                transition: transform 0.3s ease;
+            }
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+    
+    <!-- 额外字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 基础样式 */
+        body {
+            scroll-behavior: smooth;
+            background-color: #0d0221;
+        }
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a0b2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5c27fe;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff2a6d;
+        }
+        /* 文件上传样式 */
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .file-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+    </style>
+</head>
+<body class="text-gray-100 bg-dark-base bg-noise font-cyber">
+    <!-- 顶部标题栏 -->
+    <header class="fixed top-0 w-full z-50 bg-dark-card border-b border-dark-border">
+        <div class="px-4 py-3 flex items-center">
+            <button id="backButton" class="text-white mr-4">
+                <i class="fa fa-arrow-left text-xl"></i>
+            </button>
+            <div class="text-white text-xl font-future font-bold tracking-wider">
+                职位申请
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="pt-16 pb-20">
+        <!-- 申请表单卡片 -->
+        <section class="px-4 py-6 bg-dark-surface">
+            <h2 class="text-xl font-bold mb-6 flex items-center">
+                <i class="fa fa-id-card-o text-neon-blue mr-2"></i>
+                选手信息
+            </h2>
+            
+            <form id="applicationForm" class="space-y-6">
+                <!-- 姓名 -->
+                <div>
+                    <label for="fullName" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>姓名
+                    </label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg text-white focus:outline-none focus:border-neon-blue transition-all"
+                        required
+                    >
+                </div>
+                
+                <!-- 性别 -->
+                <div>
+                    <label for="gender" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>性别
+                    </label>
+                    <select 
+                        id="gender" 
+                        class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg text-white focus:outline-none focus:border-neon-blue transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 20 20%22%3E%3Cpath stroke=%22%236b7280%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%221.5%22 d=%22M6 8l4 4 4-4%22/%3E%3C/svg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-10"
+                        required
+                    >
+                        <option value="">请选择性别</option>
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                
+                <!-- 出生日期 -->
+                <div>
+                    <label for="birthDate" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>出生日期
+                    </label>
+                    <input 
+                        type="date" 
+                        id="birthDate" 
+                        class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg text-white focus:outline-none focus:border-neon-blue transition-all"
+                        required
+                    >
+                </div>
+                
+                <!-- 证件类型 -->
+                <div>
+                    <label for="idType" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>证件类型
+                    </label>
+                    <select 
+                        id="idType" 
+                        class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg text-white focus:outline-none focus:border-neon-blue transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 20 20%22%3E%3Cpath stroke=%22%236b7280%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%221.5%22 d=%22M6 8l4 4 4-4%22/%3E%3C/svg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-10"
+                        required
+                    >
+                        <option value="">请选择证件类型</option>
+                        <option value="idCard">身份证</option>
+                        <option value="passport">护照</option>
+                        <option value="other">其他证件</option>
+                    </select>
+                </div>
+                
+                <!-- 证件号码 -->
+                <div>
+                    <label for="idNumber" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>证件号码
+                    </label>
+                    <input 
+                        type="text" 
+                        id="idNumber" 
+                        class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg text-white focus:outline-none focus:border-neon-blue transition-all"
+                        required
+                    >
+                </div>
+                
+                <!-- 证件签发地 -->
+                <div>
+                    <label for="issuePlace" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>证件签发地
+                    </label>
+                    <input 
+                        type="text" 
+                        id="issuePlace" 
+                        class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg text-white focus:outline-none focus:border-neon-blue transition-all"
+                        required
+                    >
+                </div>
+                
+                <!-- 邮箱 -->
+                <div>
+                    <label for="email" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>email
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg text-white focus:outline-none focus:border-neon-blue transition-all"
+                        required
+                    >
+                </div>
+                
+                <!-- 联系电话 -->
+                <div>
+                    <label for="phone" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>联系电话
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg text-white focus:outline-none focus:border-neon-blue transition-all"
+                        required
+                    >
+                </div>
+                
+                <!-- 上传图片 -->
+                <div>
+                    <label for="imageUpload" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>上传照片
+                    </label>
+                    <div class="file-upload">
+                        <div class="w-full p-6 bg-dark-card border-2 border-dashed border-dark-border rounded-lg text-center transition-all hover:border-neon-green">
+                            <i class="fa fa-camera text-4xl text-neon-green mb-2"></i>
+                            <p class="text-gray-400">点击或拖拽图片到此处上传</p>
+                            <p class="text-gray-500 text-sm mt-1">支持JPG、PNG格式，大小不超过5MB</p>
+                        </div>
+                        <input type="file" id="imageUpload" accept="image/*" required>
+                    </div>
+                    <div id="imagePreview" class="mt-3 hidden">
+                        <img src="" alt="预览图" class="max-h-32 rounded-lg border border-dark-border">
+                    </div>
+                </div>
+                
+                <!-- 上传视频 -->
+                <div>
+                    <label for="videoUpload" class="block text-gray-300 mb-2">
+                        <span class="text-neon-pink">*</span>上传自我介绍视频
+                    </label>
+                    <div class="file-upload">
+                        <div class="w-full p-6 bg-dark-card border-2 border-dashed border-dark-border rounded-lg text-center transition-all hover:border-neon-blue">
+                            <i class="fa fa-video-camera text-4xl text-neon-blue mb-2"></i>
+                            <p class="text-gray-400">点击或拖拽视频到此处上传</p>
+                            <p class="text-gray-500 text-sm mt-1">支持MP4格式，大小不超过100MB，时长不超过3分钟</p>
+                        </div>
+                        <input type="file" id="videoUpload" accept="video/*" required>
+                    </div>
+                    <div id="videoName" class="mt-3 text-neon-blue"></div>
+                </div>
+                
+                <!-- 提交按钮 -->
+                <div class="mt-8">
+                    <button 
+                        type="submit" 
+                        class="w-full py-4 bg-neon-blue text-white font-bold rounded-lg transition-all hover:bg-neon-blue/80 hover:shadow-lg hover:shadow-neon-blue/30"
+                    >
+                        完成信息填写
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', () => {
+            // 返回按钮点击事件
+            document.getElementById('backButton').addEventListener('click', () => {
+                window.history.back();
+            });
+            
+            // 图片上传预览
+            const imageUpload = document.getElementById('imageUpload');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImg = imagePreview.querySelector('img');
+            
+            imageUpload.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                    }
+                    
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            
+            // 视频上传显示文件名
+            const videoUpload = document.getElementById('videoUpload');
+            const videoName = document.getElementById('videoName');
+            
+            videoUpload.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    videoName.textContent = `已选择: ${e.target.files[0].name}`;
+                }
+            });
+            
+            // 表单提交处理
+            const applicationForm = document.getElementById('applicationForm');
+            
+            applicationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 在实际应用中，这里会处理表单数据的提交
+                // 显示提交成功提示
+                alert('申请信息已提交，我们将尽快与您联系！');
+                
+                // 提交成功后返回职位详情页
+                window.history.back();
+            });
+        });
+    </script>
+</body>
+</html>

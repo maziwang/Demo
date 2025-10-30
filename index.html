@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>未来科技 - 朋克风格招聘平台</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入Chart.js用于数据可视化 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <style>
+        /* 移动端页面宽度铺满 */
+        body {
+            width: 100%;
+            margin: 0;
+            position: relative;
+        }
+        /* 确保main内容区域也铺满宽度 */
+        main {
+            width: 100%;
+            margin: 0;
+        }
+    </style>
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            pink: '#ff2a6d',
+                            blue: '#05d9e8',
+                            green: '#01ffc3',
+                            yellow: '#fee440'
+                        },
+                        dark: {
+                            base: '#0d0221',
+                            card: '#1a0b2e',
+                            surface: '#2d1b50',
+                            border: '#5c27fe'
+                        }
+                    },
+                    fontFamily: {
+                        cyber: ['Rajdhani', 'sans-serif'],
+                        future: ['Orbitron', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%': { textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff2a6d, 0 0 20px #ff2a6d' },
+                            '100%': { textShadow: '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #05d9e8, 0 0 40px #05d9e8' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow-neon {
+                text-shadow: 0 0 5px currentColor;
+            }
+            .border-neon {
+                box-shadow: 0 0 5px currentColor;
+            }
+            .bg-noise {
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+                background-blend-mode: overlay;
+                background-size: 200px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(12px);
+                background-color: rgba(13, 2, 33, 0.7);
+            }
+            .hover-scale {
+                transition: transform 0.3s ease;
+            }
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+    
+    <!-- 额外字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 基础样式 */
+        body {
+            scroll-behavior: smooth;
+            background-color: #0d0221;
+        }
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a0b2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5c27fe;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff2a6d;
+        }
+        /* 骨架屏动画 */
+        @keyframes shimmer {
+            0% { background-position: -468px 0 }
+            100% { background-position: 468px 0 }
+        }
+        .animate-shimmer {
+            background: linear-gradient(to right, #2d1b50 8%, #1a0b2e 18%, #2d1b50 33%);
+            background-size: 800px 104px;
+            animation: shimmer 1.5s infinite linear;
+        }
+    </style>
+</head>
+<body class="text-gray-100 bg-dark-base bg-noise font-cyber">
+    <!-- 顶部简单标题栏 -->
+    <header class="fixed top-0 w-full z-50 bg-dark-card border-b border-dark-border">
+        <div class="px-4 py-3 flex justify-center">
+            <div class="text-neon-blue text-2xl font-future font-bold tracking-wider animate-glow">
+                有人吗
+            </div>
+        </div>
+    </header>
+
+    <!-- 底部微信小程序样式导航栏 -->
+    <nav class="fixed bottom-0 w-full z-50 bg-dark-card border-t border-dark-border">
+        <div class="grid grid-cols-4 h-16">
+            <a href="#home" class="flex flex-col items-center justify-center text-neon-pink hover:text-neon-pink transition-colors duration-300" onclick="scrollToSection('home')">
+                <i class="fa fa-home text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </a>
+            <a href="jobs-list.html" class="flex flex-col items-center justify-center text-white hover:text-neon-blue transition-colors duration-300">
+                <i class="fa fa-briefcase text-xl mb-1"></i>
+                <span class="text-xs">职位</span>
+            </a>
+            <a href="messages.html" class="flex flex-col items-center justify-center text-white hover:text-neon-green transition-colors duration-300">
+                <i class="fa fa-comment text-xl mb-1"></i>
+                <span class="text-xs">消息</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center justify-center text-white hover:text-neon-yellow transition-colors duration-300">
+                <i class="fa fa-user text-xl mb-1"></i>
+                <span class="text-xs">个人中心</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 - 添加底部padding避免被底部导航栏遮挡 -->
+    <main class="pt-16 pb-20">
+
+        
+        <!-- Banner栏位 - 适配微信小程序H5 - 轮播图 -->
+        <section id="home" class="relative overflow-hidden w-full">
+            <div class="max-w-[95%] mx-auto">
+            <!-- 轮播容器 -->
+            <div class="relative">
+                <!-- 轮播图轨道 -->
+                <div id="banner-track" class="flex transition-transform duration-500 ease-in-out h-[50vh] items-center">
+                    <style>
+                        /* 轮播图卡片效果样式 */
+                        #banner-track > div {
+                            transition: all 0.5s ease-in-out;
+                            transform-origin: center;
+                        }
+                        #banner-track > div.active {
+                            height: calc(100%);
+                            z-index: 3;
+                        }
+                        #banner-track > div.prev, #banner-track > div.next {
+                            height: calc(100% - 15px);
+                            z-index: 2;
+                        }
+                        #banner-track > div {
+                            height: calc(100% - 30px);
+                            opacity: 0.7;
+                            z-index: 1;
+                        }
+                    </style>
+                    <!-- Banner 1 - 宝洁 -->
+                    <div class="min-w-full relative">
+                        <!-- 背景图形 -->
+                        <div class="absolute inset-0 z-0">
+                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-dark-base/70 to-dark-base z-10"></div>
+                            <!-- 网格背景 -->
+                            <div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(#5c27fe 1px, transparent 1px), linear-gradient(90deg, #5c27fe 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            <!-- 宝洁品牌图片 -->
+                            <img src="https://picsum.photos/seed/pg/1920/1080" alt="宝洁品牌" class="w-full h-full object-cover object-center">
+                        </div>
+                        
+                        <div class="px-4 h-[50vh] flex items-center relative z-10">
+                            <div class="max-w-md">
+                                <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-future font-bold leading-tight mb-4">
+                                    <span class="text-neon-blue text-shadow-neon">宝洁</span> 创新实验室
+                                </h1>
+                                <p class="text-[clamp(0.9rem,2vw,1.1rem)] text-gray-300 mb-6 max-w-sm">
+                                    加入宝洁创新团队，打造下一代日化产品，引领行业创新潮流。
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <button class="px-5 py-2 bg-neon-blue text-white font-bold rounded-md hover-scale border-neon-blue">
+                                        探索职位
+                                    </button>
+                                    <button class="px-5 py-2 bg-transparent border-2 border-white text-white font-bold rounded-md hover-scale hover:bg-white/10">
+                                        了解更多
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Banner 2 - 联合利华 -->
+                    <div class="min-w-full relative">
+                        <!-- 背景图形 -->
+                        <div class="absolute inset-0 z-0">
+                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-dark-base/70 to-dark-base z-10"></div>
+                            <!-- 网格背景 -->
+                            <div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(#5c27fe 1px, transparent 1px), linear-gradient(90deg, #5c27fe 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            <!-- 联合利华品牌图片 -->
+                            <img src="https://picsum.photos/seed/unilever/1920/1080" alt="联合利华品牌" class="w-full h-full object-cover object-center">
+                        </div>
+                        
+                        <div class="px-4 h-[50vh] flex items-center relative z-10">
+                            <div class="max-w-md">
+                                <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-future font-bold leading-tight mb-4">
+                                    <span class="text-neon-green text-shadow-neon">联合利华</span> 数字创新
+                                </h1>
+                                <p class="text-[clamp(0.9rem,2vw,1.1rem)] text-gray-300 mb-6 max-w-sm">
+                                    与联合利华一起，用科技力量重新定义快消行业的未来发展方向。
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <button class="px-5 py-2 bg-neon-green text-white font-bold rounded-md hover-scale border-neon-green">
+                                        探索职位
+                                    </button>
+                                    <button class="px-5 py-2 bg-transparent border-2 border-white text-white font-bold rounded-md hover-scale hover:bg-white/10">
+                                        了解更多
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Banner 3 - 欧莱雅 -->
+                    <div class="min-w-full relative">
+                        <!-- 背景图形 -->
+                        <div class="absolute inset-0 z-0">
+                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-dark-base/70 to-dark-base z-10"></div>
+                            <!-- 网格背景 -->
+                            <div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(#5c27fe 1px, transparent 1px), linear-gradient(90deg, #5c27fe 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            <!-- 欧莱雅品牌图片 -->
+                            <img src="https://picsum.photos/seed/loreal/1920/1080" alt="欧莱雅品牌" class="w-full h-full object-cover object-center">
+                        </div>
+                        
+                        <div class="px-4 h-[50vh] flex items-center relative z-10">
+                            <div class="max-w-md">
+                                <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-future font-bold leading-tight mb-4">
+                                    <span class="text-neon-pink text-shadow-neon">欧莱雅</span> 美妆科技
+                                </h1>
+                                <p class="text-[clamp(0.9rem,2vw,1.1rem)] text-gray-300 mb-6 max-w-sm">
+                                    加入欧莱雅，将科技与美丽完美融合，创造引领时尚的美妆产品。
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <button class="px-5 py-2 bg-neon-pink text-white font-bold rounded-md hover-scale border-neon-pink">
+                                        探索职位
+                                    </button>
+                                    <button class="px-5 py-2 bg-transparent border-2 border-white text-white font-bold rounded-md hover-scale hover:bg-white/10">
+                                        了解更多
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Banner 4 - 可口可乐 -->
+                    <div class="min-w-full relative">
+                        <!-- 背景图形 -->
+                        <div class="absolute inset-0 z-0">
+                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-dark-base/70 to-dark-base z-10"></div>
+                            <!-- 网格背景 -->
+                            <div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(#5c27fe 1px, transparent 1px), linear-gradient(90deg, #5c27fe 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            <!-- 可口可乐品牌图片 -->
+                            <img src="https://picsum.photos/seed/cocacola/1920/1080" alt="可口可乐品牌" class="w-full h-full object-cover object-center">
+                        </div>
+                        
+                        <div class="px-4 h-[50vh] flex items-center relative z-10">
+                            <div class="max-w-md">
+                                <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-future font-bold leading-tight mb-4">
+                                    <span class="text-red-500 text-shadow-neon">可口可乐</span> 营销创新
+                                </h1>
+                                <p class="text-[clamp(0.9rem,2vw,1.1rem)] text-gray-300 mb-6 max-w-sm">
+                                    与可口可乐一起，打造令人难忘的品牌体验，传递快乐与活力。
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <button class="px-5 py-2 bg-red-500 text-white font-bold rounded-md hover-scale border-red-500">
+                                        探索职位
+                                    </button>
+                                    <button class="px-5 py-2 bg-transparent border-2 border-white text-white font-bold rounded-md hover-scale hover:bg-white/10">
+                                        了解更多
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Banner 5 - 雀巢 -->
+                    <div class="min-w-full relative">
+                        <!-- 背景图形 -->
+                        <div class="absolute inset-0 z-0">
+                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-dark-base/70 to-dark-base z-10"></div>
+                            <!-- 网格背景 -->
+                            <div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(#5c27fe 1px, transparent 1px), linear-gradient(90deg, #5c27fe 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            <!-- 雀巢品牌图片 -->
+                            <img src="https://picsum.photos/seed/nestle/1920/1080" alt="雀巢品牌" class="w-full h-full object-cover object-center">
+                        </div>
+                        
+                        <div class="px-4 h-[50vh] flex items-center relative z-10">
+                            <div class="max-w-md">
+                                <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-future font-bold leading-tight mb-4">
+                                    <span class="text-neon-yellow text-shadow-neon">雀巢</span> 研发创新
+                                </h1>
+                                <p class="text-[clamp(0.9rem,2vw,1.1rem)] text-gray-300 mb-6 max-w-sm">
+                                    加入雀巢研发团队，用创新科技打造营养健康的食品饮料产品。
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <button class="px-5 py-2 bg-neon-yellow text-dark-base font-bold rounded-md hover-scale border-neon-yellow">
+                                        探索职位
+                                    </button>
+                                    <button class="px-5 py-2 bg-transparent border-2 border-white text-white font-bold rounded-md hover-scale hover:bg-white/10">
+                                        了解更多
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 轮播指示器 -->
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
+                    <button class="w-2.5 h-2.5 rounded-full bg-white opacity-100 banner-dot active"></button>
+                    <button class="w-2.5 h-2.5 rounded-full bg-white opacity-50 banner-dot"></button>
+                    <button class="w-2.5 h-2.5 rounded-full bg-white opacity-50 banner-dot"></button>
+                    <button class="w-2.5 h-2.5 rounded-full bg-white opacity-50 banner-dot"></button>
+                    <button class="w-2.5 h-2.5 rounded-full bg-white opacity-50 banner-dot"></button>
+                </div>
+                
+
+            </div>
+        </section>
+        
+        <!-- 职位列表区域 -->
+        <section id="jobs" class="py-8 bg-dark-card w-full">
+            <div class="px-4">
+                <div class="text-center mb-8">
+                    <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-future font-bold mb-3">
+                        <span class="text-neon-green text-shadow-neon">热门</span>职位
+                    </h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto text-sm">
+                        我们提供具有竞争力的薪资和福利，以及一个充满活力的工作环境。
+                    </p>
+                </div>
+                
+                <!-- 职位卡片列表 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-3">
+                    <!-- 舞台演绎类别职位 - 职位卡片 1 -->
+                    <div class="bg-dark-surface border border-dark-border rounded-lg p-6 hover:border-neon-pink transition-all duration-300 hover-scale cursor-pointer" onclick="viewJobDetail('show-director')">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">秀导团队</h3>
+                                <p class="text-neon-blue">未来舞台娱乐</p>
+                            </div>
+                            <span class="px-3 py-1 bg-neon-blue/20 text-neon-blue rounded-full text-sm">全职</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">舞台演绎</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">团队管理</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">创意策划</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-6">
+                            <span class="text-neon-green font-bold">¥30K-45K/月</span>
+                            <button class="text-neon-pink hover:text-white transition-colors" onclick="viewJobDetail('show-director'); event.stopPropagation();">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 舞台演绎类别职位 - 职位卡片 2 -->
+                    <div class="bg-dark-surface border border-dark-border rounded-lg p-6 hover:border-neon-blue transition-all duration-300 hover-scale cursor-pointer" onclick="viewJobDetail('host')">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">主持人</h3>
+                                <p class="text-neon-green">星空活动策划</p>
+                            </div>
+                            <span class="px-3 py-1 bg-neon-green/20 text-neon-green rounded-full text-sm">兼职</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">舞台演绎</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">语言表达</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">临场应变</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-6">
+                            <span class="text-neon-green font-bold">¥20K-30K/月</span>
+                            <button class="text-neon-pink hover:text-white transition-colors" onclick="viewJobDetail('host'); event.stopPropagation();">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 舞台演绎类别职位 - 职位卡片 3 -->
+                    <div class="bg-dark-surface border border-dark-border rounded-lg p-6 hover:border-neon-green transition-all duration-300 hover-scale cursor-pointer" onclick="viewJobDetail('dancer')">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">舞蹈演员</h3>
+                                <p class="text-neon-pink">梦幻艺术团</p>
+                            </div>
+                            <span class="px-3 py-1 bg-neon-pink/20 text-neon-pink rounded-full text-sm">全职</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">舞台演绎</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">现代舞</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">街舞</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-6">
+                            <span class="text-neon-green font-bold">¥15K-25K/月</span>
+                            <button class="text-neon-pink hover:text-white transition-colors" onclick="viewJobDetail('dancer'); event.stopPropagation();">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 视觉创作类别职位 - 职位卡片 4 -->
+                    <div class="bg-dark-surface border border-dark-border rounded-lg p-6 hover:border-neon-yellow transition-all duration-300 hover-scale cursor-pointer" onclick="viewJobDetail('visual-designer')">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">视觉设计师</h3>
+                                <p class="text-neon-yellow">创意视觉工作室</p>
+                            </div>
+                            <span class="px-3 py-1 bg-neon-yellow/20 text-neon-yellow rounded-full text-sm">全职</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">视觉创作</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">PS</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">AI</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">创意设计</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-6">
+                            <span class="text-neon-green font-bold">¥18K-28K/月</span>
+                            <button class="text-neon-pink hover:text-white transition-colors" onclick="viewJobDetail('visual-designer'); event.stopPropagation();">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 特色服务类别职位 - 职位卡片 5 -->
+                    <div class="bg-dark-surface border border-dark-border rounded-lg p-6 hover:border-neon-blue transition-all duration-300 hover-scale cursor-pointer" onclick="viewJobDetail('model')">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">礼仪模特</h3>
+                                <p class="text-neon-blue">优雅礼仪公司</p>
+                            </div>
+                            <span class="px-3 py-1 bg-neon-blue/20 text-neon-blue rounded-full text-sm">兼职</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">特色服务</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">形象气质佳</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">礼仪培训</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-6">
+                            <span class="text-neon-green font-bold">¥10K-20K/月</span>
+                            <button class="text-neon-pink hover:text-white transition-colors" onclick="viewJobDetail('model'); event.stopPropagation();">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 活动支持类别职位 - 职位卡片 6 -->
+                    <div class="bg-dark-surface border border-dark-border rounded-lg p-6 hover:border-neon-pink transition-all duration-300 hover-scale cursor-pointer" onclick="viewJobDetail('event-executive')">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">活动执行</h3>
+                                <p class="text-neon-pink">环球活动策划</p>
+                            </div>
+                            <span class="px-3 py-1 bg-neon-pink/20 text-neon-pink rounded-full text-sm">全职</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">活动支持</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">项目管理</span>
+                            <span class="px-2 py-1 bg-dark-base rounded text-xs text-gray-300">沟通协调</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-6">
+                            <span class="text-neon-green font-bold">¥20K-30K/月</span>
+                            <button class="text-neon-pink hover:text-white transition-colors" onclick="viewJobDetail('event-executive'); event.stopPropagation();">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 加载更多按钮 -->
+                <div class="text-center mt-12">
+                    <button class="px-8 py-3 border-2 border-neon-blue text-neon-blue hover:bg-neon-blue/10 transition-all duration-300 rounded-md hover-scale" onclick="window.location.href = 'jobs-list.html'">
+                        加载更多职位 <i class="fa fa-refresh ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 导航功能模块 - 从关于我们开始的内容转为导航按钮 -->
+        <section class="py-12 bg-dark-base w-full">
+            <div class="px-4">
+                <div class="text-center mb-10">
+                    <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-future font-bold mb-4">
+                        了解 <span class="text-neon-blue text-shadow-neon">更多</span>
+                    </h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">
+                        点击下方按钮，探索NEO-TECH的各个方面
+                    </p>
+                </div>
+                
+                <!-- 功能导航按钮网格 -->
+                <div class="grid grid-cols-4 gap-4">
+                    <!-- 热门推荐 -->
+                    <button class="flex flex-col items-center text-center p-3 hover-scale" onclick="navigateToPage('hot')">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-neon-pink/30 to-neon-pink/10 flex items-center justify-center mb-2">
+                            <i class="fa fa-fire text-neon-pink text-2xl"></i>
+                        </div>
+                        <span class="text-sm text-gray-200">热门推荐</span>
+                    </button>
+                    
+                    <!-- 家装家居 -->
+                    <button class="flex flex-col items-center text-center p-3 hover-scale" onclick="navigateToPage('furniture')">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-neon-yellow/30 to-neon-yellow/10 flex items-center justify-center mb-2">
+                            <i class="fa fa-home text-neon-yellow text-2xl"></i>
+                        </div>
+                        <span class="text-sm text-gray-200">家装家居</span>
+                    </button>
+                    
+                    <!-- 户外出行 -->
+                    <button class="flex flex-col items-center text-center p-3 hover-scale" onclick="navigateToPage('outdoor')">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500/30 to-purple-500/10 flex items-center justify-center mb-2">
+                            <i class="fa fa-plane text-purple-500 text-2xl"></i>
+                        </div>
+                        <span class="text-sm text-gray-200">户外出行</span>
+                    </button>
+                    
+                    <!-- 美妆个护 -->
+                    <button class="flex flex-col items-center text-center p-3 hover-scale" onclick="navigateToPage('beauty')">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-red-500/30 to-red-500/10 flex items-center justify-center mb-2">
+                            <i class="fa fa-diamond text-red-500 text-2xl"></i>
+                        </div>
+                        <span class="text-sm text-gray-200">美妆个护</span>
+                    </button>
+                    
+                    <!-- 3C数码 -->
+                    <button class="flex flex-col items-center text-center p-3 hover-scale" onclick="navigateToPage('digital')">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500/30 to-blue-500/10 flex items-center justify-center mb-2">
+                            <i class="fa fa-mobile text-blue-500 text-2xl"></i>
+                        </div>
+                        <span class="text-sm text-gray-200">3C数码</span>
+                    </button>
+                    
+                    <!-- 日用文创 -->
+                    <button class="flex flex-col items-center text-center p-3 hover-scale" onclick="navigateToPage('creative')">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500/30 to-pink-500/10 flex items-center justify-center mb-2">
+                            <i class="fa fa-paint-brush text-pink-500 text-2xl"></i>
+                        </div>
+                        <span class="text-sm text-gray-200">日用文创</span>
+                    </button>
+                    
+                    <!-- 培训 -->
+                    <button class="flex flex-col items-center text-center p-3 hover-scale" onclick="navigateToPage('training')">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-teal-500/30 to-teal-500/10 flex items-center justify-center mb-2">
+                            <i class="fa fa-graduation-cap text-teal-500 text-2xl"></i>
+                        </div>
+                        <span class="text-sm text-gray-200">培训</span>
+                    </button>
+                    
+                    <!-- 潮流服饰 -->
+                    <button class="flex flex-col items-center text-center p-3 hover-scale" onclick="navigateToPage('fashion')">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500/30 to-orange-500/10 flex items-center justify-center mb-2">
+                            <svg class="w-8 h-8 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="text-sm text-gray-200">潮流服饰</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-neon-pink text-white flex items-center justify-center opacity-0 invisible transition-all duration-300 hover-scale z-50">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+    
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        const backToTop = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                // 显示返回顶部按钮
+                backToTop.classList.remove('opacity-0', 'invisible');
+                backToTop.classList.add('opacity-100', 'visible');
+            } else {
+                // 隐藏返回顶部按钮
+                backToTop.classList.add('opacity-0', 'invisible');
+                backToTop.classList.remove('opacity-100', 'visible');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 返回顶部功能
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 导航到二级页面的函数 - 微信小程序适配
+        function navigateToPage(pageType) {
+            // 在微信小程序环境中，可以使用wx.navigateTo或其他小程序API
+            // 这里模拟导航行为，实际使用时需要根据小程序框架进行调整
+            console.log(`导航到${pageType}页面`);
+            
+            // 模拟跳转效果
+            alert(`即将跳转到${getPageName(pageType)}页面`);
+            
+            // 在实际小程序中可能会这样使用：
+            // wx.navigateTo({ url: `/pages/${pageType}/${pageType}` });
+        }
+        
+        // 获取页面中文名称
+        function getPageName(pageType) {
+            const pageNames = {
+                'hot': '热门推荐',
+                'furniture': '家装家居',
+                'outdoor': '户外出行',
+                'beauty': '美妆个护',
+                'digital': '3C数码',
+                'creative': '日用文创',
+                'training': '培训',
+                'fashion': '潮流服饰',
+                'about': '关于我们',
+                'benefits': '员工福利',
+                'apply': '申请流程',
+                'faq': '常见问题',
+                'environment': '工作环境',
+                'contact': '联系我们'
+            };
+            return pageNames[pageType] || pageType;
+        }
+        
+        // 查看职位详情
+        function viewJobDetail(jobId) {
+            sessionStorage.setItem('currentJobId', jobId);
+            // 设置来源页面为首页
+            sessionStorage.setItem('jobDetailReferrer', 'index.html');
+            window.location.href = 'job-detail.html';
+        }
+
+        // 平滑滚动到指定区域
+        function scrollToSection(sectionId) {
+            // 阻止默认的锚点跳转行为
+            event.preventDefault();
+            
+            // 获取目标元素
+            const targetElement = document.getElementById(sectionId);
+            if (targetElement) {
+                // 计算滚动位置，考虑到固定的导航栏高度
+                const navHeight = 64; // 导航栏高度 (16px = 1rem)
+                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                
+                // 平滑滚动
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+                
+                // 添加视觉反馈
+                const activeNavItem = document.querySelector(`a[href="#${sectionId}"]`);
+                if (activeNavItem) {
+                    // 移除所有导航项的活动状态
+                    document.querySelectorAll('nav a').forEach(item => {
+                        item.classList.remove('active-nav-item');
+                    });
+                    // 添加当前导航项的活动状态
+                    activeNavItem.classList.add('active-nav-item');
+                    
+                    // 短暂高亮效果
+                    activeNavItem.style.opacity = '0.8';
+                    setTimeout(() => {
+                        activeNavItem.style.opacity = '1';
+                    }, 200);
+                }
+            }
+        }
+        
+        // 添加导航项活动状态样式
+        const style = document.createElement('style');
+        style.textContent = `
+            .active-nav-item {
+                color: var(--tw-color-neon-blue);
+            }
+            nav a:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 轮播图功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const track = document.getElementById('banner-track');
+            const dots = document.querySelectorAll('.banner-dot');
+            const slides = track.querySelectorAll('div[class="min-w-full relative"]');
+            let currentIndex = 0;
+            const slideCount = slides.length;
+            let slideWidth = 100; // 百分比
+            let autoplayInterval;
+            let isTransitioning = false;
+            let startX, moveX, initialScroll;
+
+            // 更新轮播图位置和样式
+            function updateSlidePosition() {
+                track.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+                
+                // 更新指示器状态
+                dots.forEach((dot, index) => {
+                    if (index === currentIndex) {
+                        dot.classList.add('active');
+                        dot.style.opacity = '1';
+                    } else {
+                        dot.classList.remove('active');
+                        dot.style.opacity = '0.5';
+                    }
+                });
+                
+                // 更新卡片样式
+                slides.forEach((slide, index) => {
+                    // 重置所有样式
+                    slide.classList.remove('active', 'prev', 'next');
+                    
+                    // 当前显示的卡片
+                    if (index === currentIndex) {
+                        slide.classList.add('active');
+                        slide.style.opacity = '1';
+                    }
+                    // 前一张卡片
+                    else if (index === (currentIndex - 1 + slideCount) % slideCount) {
+                        slide.classList.add('prev');
+                        slide.style.opacity = '0.9';
+                    }
+                    // 后一张卡片
+                    else if (index === (currentIndex + 1) % slideCount) {
+                        slide.classList.add('next');
+                        slide.style.opacity = '0.9';
+                    }
+                    // 其他卡片
+                    else {
+                        slide.style.opacity = '0.7';
+                    }
+                });
+            }
+
+            // 下一张
+            function nextSlide() {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                
+                currentIndex = (currentIndex + 1) % slideCount;
+                updateSlidePosition();
+                
+                // 防止快速点击
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 500);
+            }
+
+            // 上一张
+            function prevSlide() {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                
+                currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+                updateSlidePosition();
+                
+                // 防止快速点击
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 500);
+            }
+
+            // 跳转到指定幻灯片
+            function goToSlide(index) {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                
+                currentIndex = index;
+                updateSlidePosition();
+                
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 500);
+                
+                // 重置自动播放
+                resetAutoplay();
+            }
+
+            // 自动播放
+            function startAutoplay() {
+                autoplayInterval = setInterval(nextSlide, 5000);
+            }
+
+            // 重置自动播放
+            function resetAutoplay() {
+                clearInterval(autoplayInterval);
+                startAutoplay();
+            }
+
+            // 触摸事件处理 - 开始
+            function handleTouchStart(e) {
+                startX = e.touches[0].clientX;
+                initialScroll = -currentIndex * slideWidth;
+                clearInterval(autoplayInterval); // 触摸时停止自动播放
+            }
+
+            // 触摸事件处理 - 移动
+            function handleTouchMove(e) {
+                if (!startX) return;
+                
+                moveX = e.touches[0].clientX;
+                const diff = (moveX - startX) / window.innerWidth * 100;
+                const newScroll = initialScroll + diff;
+                
+                // 限制在一定范围内拖动
+                if (newScroll >= 0 || newScroll <= -(slideCount - 1) * slideWidth) {
+                    return;
+                }
+                
+                // 拖动时不使用过渡效果
+                track.style.transition = 'none';
+                track.style.transform = `translateX(${newScroll}%)`;
+            }
+
+            // 触摸事件处理 - 结束
+            function handleTouchEnd(e) {
+                if (!startX) return;
+                
+                const diff = moveX - startX;
+                const threshold = 50; // 最小滑动距离
+                
+                // 恢复过渡效果
+                track.style.transition = 'transform 500ms ease-in-out';
+                
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0) {
+                        prevSlide();
+                    } else {
+                        nextSlide();
+                    }
+                } else {
+                    // 如果滑动距离太小，回到当前位置
+                    updateSlidePosition();
+                }
+                
+                // 重置触摸状态
+                startX = null;
+                moveX = null;
+                
+                // 重新开始自动播放
+                startAutoplay();
+            }
+            
+            // 鼠标拖拽事件 - 开始
+            function handleMouseDown(e) {
+                startX = e.clientX;
+                initialScroll = -currentIndex * slideWidth;
+                clearInterval(autoplayInterval); // 拖拽时停止自动播放
+                
+                // 添加鼠标移动和松开事件监听
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+                
+                // 防止文本选择
+                document.body.style.userSelect = 'none';
+            }
+            
+            // 鼠标拖拽事件 - 移动
+            function handleMouseMove(e) {
+                if (!startX) return;
+                
+                moveX = e.clientX;
+                const diff = (moveX - startX) / window.innerWidth * 100;
+                const newScroll = initialScroll + diff;
+                
+                // 限制在一定范围内拖动
+                if (newScroll >= 0 || newScroll <= -(slideCount - 1) * slideWidth) {
+                    return;
+                }
+                
+                // 拖动时不使用过渡效果
+                track.style.transition = 'none';
+                track.style.transform = `translateX(${newScroll}%)`;
+            }
+            
+            // 鼠标拖拽事件 - 结束
+            function handleMouseUp(e) {
+                if (!startX) return;
+                
+                const diff = moveX - startX;
+                const threshold = 50; // 最小滑动距离
+                
+                // 恢复过渡效果
+                track.style.transition = 'transform 500ms ease-in-out';
+                
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0) {
+                        prevSlide();
+                    } else {
+                        nextSlide();
+                    }
+                } else {
+                    // 如果滑动距离太小，回到当前位置
+                    updateSlidePosition();
+                }
+                
+                // 重置触摸状态
+                startX = null;
+                moveX = null;
+                
+                // 移除事件监听
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+                
+                // 恢复文本选择
+                document.body.style.userSelect = '';
+                
+                // 重新开始自动播放
+                startAutoplay();
+            }
+
+            // 添加事件监听
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => goToSlide(index));
+            });
+
+            // 触摸事件
+            track.addEventListener('touchstart', handleTouchStart);
+            track.addEventListener('touchmove', handleTouchMove);
+            track.addEventListener('touchend', handleTouchEnd);
+            
+            // 鼠标拖拽事件
+            track.addEventListener('mousedown', handleMouseDown);
+
+            // 鼠标悬停时停止自动播放，离开时继续
+            const bannerSection = document.getElementById('home');
+            bannerSection.addEventListener('mouseenter', () => {
+                clearInterval(autoplayInterval);
+            });
+            
+            bannerSection.addEventListener('mouseleave', startAutoplay);
+
+            // 窗口大小变化时重新计算
+            window.addEventListener('resize', updateSlidePosition);
+
+            // 初始化
+            updateSlidePosition();
+            startAutoplay();
+        });
+        
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('NEO-TECH 招聘平台已加载 - 微信小程序H5适配版');
+        });
+    </script>
+</body>
+</html>

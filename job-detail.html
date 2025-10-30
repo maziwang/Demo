@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>职位详情 - 未来科技招聘平台</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        /* 移动端页面宽度铺满 */
+        body {
+            width: 100%;
+            margin: 0;
+            position: relative;
+        }
+        /* 确保main内容区域也铺满宽度 */
+        main {
+            width: 100%;
+            margin: 0;
+        }
+    </style>
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            pink: '#ff2a6d',
+                            blue: '#05d9e8',
+                            green: '#01ffc3',
+                            yellow: '#fee440'
+                        },
+                        dark: {
+                            base: '#0d0221',
+                            card: '#1a0b2e',
+                            surface: '#2d1b50',
+                            border: '#5c27fe'
+                        }
+                    },
+                    fontFamily: {
+                        cyber: ['Rajdhani', 'sans-serif'],
+                        future: ['Orbitron', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%': { textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff2a6d, 0 0 20px #ff2a6d' },
+                            '100%': { textShadow: '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #05d9e8, 0 0 40px #05d9e8' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow-neon {
+                text-shadow: 0 0 5px currentColor;
+            }
+            .border-neon {
+                box-shadow: 0 0 5px currentColor;
+            }
+            .bg-noise {
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+                background-blend-mode: overlay;
+                background-size: 200px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(12px);
+                background-color: rgba(13, 2, 33, 0.7);
+            }
+            .hover-scale {
+                transition: transform 0.3s ease;
+            }
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+    
+    <!-- 额外字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 基础样式 */
+        body {
+            scroll-behavior: smooth;
+            background-color: #0d0221;
+        }
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a0b2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5c27fe;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff2a6d;
+        }
+    </style>
+</head>
+<body class="text-gray-100 bg-dark-base bg-noise font-cyber">
+    <!-- 顶部标题栏 -->
+    <header class="fixed top-0 w-full z-50 bg-dark-card border-b border-dark-border">
+        <div class="px-4 py-3 flex items-center">
+            <button id="backButton" class="text-white mr-4">
+                <i class="fa fa-arrow-left text-xl"></i>
+            </button>
+            <div class="text-white text-xl font-future font-bold tracking-wider">
+                职位详情
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="pt-16 pb-20">
+        <!-- 职位基本信息卡片 -->
+        <section class="px-4 py-6 bg-dark-surface">
+            <div id="jobHeader" class="">
+                <h1 class="text-2xl font-bold text-white mb-2">秀导团队</h1>
+                <p class="text-neon-blue mb-4">未来舞台娱乐</p>
+                <div class="flex flex-wrap gap-3 mb-4">
+                    <span class="px-3 py-1 bg-neon-green/20 text-neon-green rounded-full text-sm">¥30K-45K/月</span>
+                    <span class="px-3 py-1 bg-neon-blue/20 text-neon-blue rounded-full text-sm">全职</span>
+                    <span class="px-3 py-1 bg-dark-base text-gray-300 rounded-full text-sm">上海</span>
+                    <span class="px-3 py-1 bg-dark-base text-gray-300 rounded-full text-sm">3-5年</span>
+                    <span class="px-3 py-1 bg-dark-base text-gray-300 rounded-full text-sm">本科</span>
+                </div>
+                
+                <!-- 互动按钮区域 -->
+                <div class="flex gap-4 mb-6">
+                    <button id="likeButton" class="flex-1 py-3 bg-dark-base border border-dark-border rounded-lg flex items-center justify-center gap-2 transition-all hover:border-neon-pink hover:bg-dark-card">
+                        <i class="fa fa-heart-o text-neon-pink"></i>
+                        <span>点赞</span>
+                        <span id="likeCount" class="text-neon-pink">128</span>
+                    </button>
+                    <button id="collectButton" class="flex-1 py-3 bg-dark-base border border-dark-border rounded-lg flex items-center justify-center gap-2 transition-all hover:border-neon-yellow hover:bg-dark-card">
+                        <i class="fa fa-star-o text-neon-yellow"></i>
+                        <span>收藏</span>
+                    </button>
+                    <button id="shareButton" class="flex-1 py-3 bg-dark-base border border-dark-border rounded-lg flex items-center justify-center gap-2 transition-all hover:border-neon-blue hover:bg-dark-card">
+                        <i class="fa fa-share-alt text-neon-blue"></i>
+                        <span>分享</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 职位亮点 -->
+        <section class="mt-4 px-4 py-6 bg-dark-surface">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fa fa-lightbulb-o text-neon-yellow mr-2"></i>
+                职位亮点
+            </h2>
+            <div id="jobHighlights" class="space-y-2">
+                <div class="flex items-start">
+                    <i class="fa fa-check text-neon-green mt-1 mr-3"></i>
+                    <span>具有竞争力的薪资待遇，年终奖金丰厚</span>
+                </div>
+                <div class="flex items-start">
+                    <i class="fa fa-check text-neon-green mt-1 mr-3"></i>
+                    <span>五险一金，带薪年假，定期团建活动</span>
+                </div>
+                <div class="flex items-start">
+                    <i class="fa fa-check text-neon-green mt-1 mr-3"></i>
+                    <span>与行业顶尖人才合作，广阔的职业发展空间</span>
+                </div>
+                <div class="flex items-start">
+                    <i class="fa fa-check text-neon-green mt-1 mr-3"></i>
+                    <span>参与大型活动策划与执行，积累丰富经验</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 职位详情 -->
+        <section class="mt-4 px-4 py-6 bg-dark-surface">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fa fa-list-alt text-neon-blue mr-2"></i>
+                职位详情
+            </h2>
+            
+            <!-- 岗位职责 -->
+            <div id="jobResponsibilities" class="mb-6">
+                <h3 class="text-lg font-bold mb-3 text-neon-pink">岗位职责</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <span class="inline-block w-5 h-5 rounded-full bg-neon-pink/20 text-neon-pink text-xs flex items-center justify-center mr-3 mt-0.5">1</span>
+                        <span>负责大型活动的舞台导演工作，包括创意构思、流程设计、人员协调等</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="inline-block w-5 h-5 rounded-full bg-neon-pink/20 text-neon-pink text-xs flex items-center justify-center mr-3 mt-0.5">2</span>
+                        <span>领导秀导团队完成演出编排，确保表演效果达到预期</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="inline-block w-5 h-5 rounded-full bg-neon-pink/20 text-neon-pink text-xs flex items-center justify-center mr-3 mt-0.5">3</span>
+                        <span>与灯光、音响、舞美等部门密切配合，打造完美舞台效果</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="inline-block w-5 h-5 rounded-full bg-neon-pink/20 text-neon-pink text-xs flex items-center justify-center mr-3 mt-0.5">4</span>
+                        <span>负责演职人员的培训和指导，提升团队整体水平</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 任职要求 -->
+            <div id="jobRequirements" class="mb-6">
+                <h3 class="text-lg font-bold mb-3 text-neon-blue">任职要求</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <span class="inline-block w-5 h-5 rounded-full bg-neon-blue/20 text-neon-blue text-xs flex items-center justify-center mr-3 mt-0.5">1</span>
+                        <span>本科及以上学历，3年以上大型活动秀导经验</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="inline-block w-5 h-5 rounded-full bg-neon-blue/20 text-neon-blue text-xs flex items-center justify-center mr-3 mt-0.5">2</span>
+                        <span>具备优秀的创意能力和执行能力，熟悉舞台艺术表现形式</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="inline-block w-5 h-5 rounded-full bg-neon-blue/20 text-neon-blue text-xs flex items-center justify-center mr-3 mt-0.5">3</span>
+                        <span>良好的团队管理和沟通协调能力，能够承受工作压力</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="inline-block w-5 h-5 rounded-full bg-neon-blue/20 text-neon-blue text-xs flex items-center justify-center mr-3 mt-0.5">4</span>
+                        <span>有大型演唱会、音乐节、时尚活动等相关经验者优先</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 工作时间地点 -->
+            <div id="jobLocation" class="mb-6">
+                <h3 class="text-lg font-bold mb-3 text-neon-green">工作时间与地点</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start">
+                        <i class="fa fa-clock-o text-neon-green mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-bold">工作时间：</span>
+                            <span>周一至周五 9:30-18:30，弹性工作制度</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fa fa-map-marker text-neon-green mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-bold">工作地点：</span>
+                            <span>上海市浦东新区张江高科技园区博云路123号</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 公司介绍 -->
+        <section class="mt-4 px-4 py-6 bg-dark-surface">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fa fa-building text-neon-green mr-2"></i>
+                公司介绍
+            </h2>
+            <div id="companyInfo" class="space-y-4">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-dark-card rounded-lg flex items-center justify-center mr-4">
+                        <span class="text-neon-blue text-2xl font-future">未娱</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">未来舞台娱乐有限公司</h3>
+                        <p class="text-gray-400 text-sm">文化娱乐 · 100-499人</p>
+                    </div>
+                </div>
+                <p class="text-gray-300">
+                    未来舞台娱乐有限公司是一家专注于大型活动策划与执行、艺人经纪、内容制作的综合性文化娱乐公司。我们致力于打造高品质的文化演出和娱乐内容，为观众带来极致的视听体验。公司拥有专业的策划团队、制作团队和管理团队，与众多知名企业、媒体平台建立了长期稳定的合作关系。
+                </p>
+            </div>
+        </section>
+
+        <!-- 应聘须知 -->
+        <section class="mt-4 px-4 py-6 bg-dark-surface">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fa fa-info-circle text-neon-yellow mr-2"></i>
+                应聘须知
+            </h2>
+            <div class="space-y-3 text-gray-300">
+                <p>• 请确保您的简历信息真实有效，我们将进行背景调查</p>
+                <p>• 投递简历后，我们将在3个工作日内与您联系</p>
+                <p>• 面试过程中请保持诚实，展现真实的自己</p>
+                <p>• 如有疑问，请随时联系我们的招聘顾问</p>
+            </div>
+        </section>
+
+        <!-- 推荐职位 -->
+        <section class="mt-4 px-4 py-6 bg-dark-surface">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fa fa-thumbs-up text-neon-pink mr-2"></i>
+                推荐职位
+            </h2>
+            <div class="space-y-4" id="recommendedJobs">
+                <!-- 推荐职位1 -->
+                <div class="p-4 bg-dark-card rounded-lg hover:border-neon-blue border border-dark-border cursor-pointer" onclick="viewRelatedJob('creative-director')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-white">创意总监</h3>
+                            <p class="text-neon-blue text-sm">未来舞台娱乐</p>
+                        </div>
+                        <span class="text-neon-green">¥35K-50K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="px-2 py-0.5 bg-dark-base rounded text-xs text-gray-300">创意策划</span>
+                        <span class="px-2 py-0.5 bg-dark-base rounded text-xs text-gray-300">团队管理</span>
+                    </div>
+                </div>
+                <!-- 推荐职位2 -->
+                <div class="p-4 bg-dark-card rounded-lg hover:border-neon-green border border-dark-border cursor-pointer" onclick="viewRelatedJob('stage-designer')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-white">舞台设计师</h3>
+                            <p class="text-neon-green text-sm">未来舞台娱乐</p>
+                        </div>
+                        <span class="text-neon-green">¥20K-35K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="px-2 py-0.5 bg-dark-base rounded text-xs text-gray-300">舞台设计</span>
+                        <span class="px-2 py-0.5 bg-dark-base rounded text-xs text-gray-300">3D建模</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部固定申请按钮 -->
+    <div class="fixed bottom-20 w-full bg-dark-card border-t border-dark-border p-4">
+        <button id="applyButton" class="w-full py-4 bg-neon-pink hover:bg-neon-pink/90 text-white font-bold rounded-lg transition-all hover-scale flex items-center justify-center gap-2">
+            <i class="fa fa-paper-plane"></i>
+            立即申请
+        </button>
+    </div>
+    
+    <!-- 底部固定导航栏 -->
+    <nav class="fixed bottom-0 w-full z-50 bg-dark-card border-t border-dark-border">
+        <div class="grid grid-cols-4 h-16">
+            <a href="index.html" class="flex flex-col items-center justify-center text-white hover:text-neon-pink transition-colors duration-300">
+                <i class="fa fa-home text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </a>
+            <a href="jobs-list.html" class="flex flex-col items-center justify-center text-neon-blue hover:text-neon-blue transition-colors duration-300">
+                <i class="fa fa-briefcase text-xl mb-1"></i>
+                <span class="text-xs">职位</span>
+            </a>
+            <a href="messages.html" class="flex flex-col items-center justify-center text-white hover:text-neon-green transition-colors duration-300">
+                <i class="fa fa-comment text-xl mb-1"></i>
+                <span class="text-xs">消息</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center justify-center text-white hover:text-neon-yellow transition-colors duration-300">
+                <i class="fa fa-user text-xl mb-1"></i>
+                <span class="text-xs">个人中心</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- JavaScript -->
+    <script>
+        // 职位数据
+        const jobData = {
+            'show-director': {
+                title: '秀导团队',
+                company: '未来舞台娱乐',
+                salary: '¥30K-45K/月',
+                type: '全职',
+                location: '上海',
+                experience: '3-5年',
+                education: '本科',
+                highlights: [
+                    '具有竞争力的薪资待遇，年终奖金丰厚',
+                    '五险一金，带薪年假，定期团建活动',
+                    '与行业顶尖人才合作，广阔的职业发展空间',
+                    '参与大型活动策划与执行，积累丰富经验'
+                ],
+                responsibilities: [
+                    '负责大型活动的舞台导演工作，包括创意构思、流程设计、人员协调等',
+                    '领导秀导团队完成演出编排，确保表演效果达到预期',
+                    '与灯光、音响、舞美等部门密切配合，打造完美舞台效果',
+                    '负责演职人员的培训和指导，提升团队整体水平'
+                ],
+                requirements: [
+                    '本科及以上学历，3年以上大型活动秀导经验',
+                    '具备优秀的创意能力和执行能力，熟悉舞台艺术表现形式',
+                    '良好的团队管理和沟通协调能力，能够承受工作压力',
+                    '有大型演唱会、音乐节、时尚活动等相关经验者优先'
+                ],
+                workingHours: '周一至周五 9:30-18:30，弹性工作制度',
+                workingLocation: '上海市浦东新区张江高科技园区博云路123号',
+                companyName: '未来舞台娱乐有限公司',
+                companyType: '文化娱乐 · 100-499人',
+                companyDesc: '未来舞台娱乐有限公司是一家专注于大型活动策划与执行、艺人经纪、内容制作的综合性文化娱乐公司。我们致力于打造高品质的文化演出和娱乐内容，为观众带来极致的视听体验。公司拥有专业的策划团队、制作团队和管理团队，与众多知名企业、媒体平台建立了长期稳定的合作关系。',
+                likes: 128
+            },
+            'host': {
+                title: '主持人',
+                company: '星空活动策划',
+                salary: '¥20K-30K/月',
+                type: '兼职',
+                location: '上海',
+                experience: '1-3年',
+                education: '大专',
+                highlights: [
+                    '灵活的工作时间，可根据个人档期安排',
+                    '每场活动有额外提成，多劳多得',
+                    '参与各类大型活动，提升个人知名度',
+                    '专业团队培训，提升主持技巧'
+                ],
+                responsibilities: [
+                    '担任各类商业活动、发布会、晚会的主持人',
+                    '根据活动需求撰写主持稿和串词',
+                    '与活动策划团队紧密配合，确保活动流程顺畅',
+                    '活跃现场气氛，与观众互动'
+                ],
+                requirements: [
+                    '大专及以上学历，1年以上主持经验',
+                    '形象气质佳，语言表达流畅，应变能力强',
+                    '性格开朗大方，善于与人沟通',
+                    '有大型活动主持经验者优先'
+                ],
+                workingHours: '根据活动安排，灵活调整',
+                workingLocation: '上海市各区，根据活动地点安排',
+                companyName: '星空活动策划有限公司',
+                companyType: '广告传媒 · 50-100人',
+                companyDesc: '星空活动策划有限公司专注于企业品牌活动、产品发布会、文化演出等各类活动的策划与执行。我们拥有一支专业的策划团队和执行团队，为客户提供一站式活动解决方案。',
+                likes: 96
+            },
+            'dancer': {
+                title: '舞蹈演员',
+                company: '梦幻艺术团',
+                salary: '¥15K-25K/月',
+                type: '全职',
+                location: '上海',
+                experience: '1-3年',
+                education: '中专',
+                highlights: [
+                    '提供专业的舞蹈培训和提升机会',
+                    '参与国内外大型演出和赛事',
+                    '舒适的工作环境和团队氛围',
+                    '包住宿，提供餐饮补贴'
+                ],
+                responsibilities: [
+                    '参与各类演出活动的舞蹈表演',
+                    '按照编排要求完成舞蹈动作和舞台表现',
+                    '积极参加日常排练和培训',
+                    '保持良好的身体状态和演出水准'
+                ],
+                requirements: [
+                    '舞蹈专业背景，1年以上舞台表演经验',
+                    '擅长现代舞、街舞等多种舞蹈风格',
+                    '形象气质佳，舞台表现力强',
+                    '有团队合作精神，能承受一定的工作压力'
+                ],
+                workingHours: '根据演出安排，每周排练5天',
+                workingLocation: '上海市静安区南京西路1266号',
+                companyName: '梦幻艺术团',
+                companyType: '文化艺术 · 50-100人',
+                companyDesc: '梦幻艺术团是一家专业的舞蹈表演团体，致力于舞蹈艺术的创作、表演和推广。我们的作品涵盖现代舞、街舞、古典舞等多种风格，曾多次在国内外比赛中获奖。',
+                likes: 156
+            },
+            'visual-designer': {
+                title: '视觉设计师',
+                company: '创意视觉工作室',
+                salary: '¥18K-28K/月',
+                type: '全职',
+                location: '上海',
+                experience: '2-4年',
+                education: '本科',
+                highlights: [
+                    '扁平管理，创意自由度高',
+                    '定期参加行业交流和培训',
+                    '五险一金，年终奖，节日福利',
+                    '弹性工作制度，结果导向'
+                ],
+                responsibilities: [
+                    '负责活动视觉设计，包括海报、宣传册、舞台背景等',
+                    '根据客户需求提供创意设计方案',
+                    '与策划团队协作，确保设计方案的实施',
+                    '不断学习和掌握最新的设计趋势和技术'
+                ],
+                requirements: [
+                    '设计相关专业本科及以上学历，2年以上设计经验',
+                    '精通Photoshop、Illustrator等设计软件',
+                    '具有良好的美术功底和创意思维',
+                    '能够独立完成设计项目，有责任心'
+                ],
+                workingHours: '周一至周五 10:00-19:00，弹性工作',
+                workingLocation: '上海市徐汇区田林路140号',
+                companyName: '创意视觉工作室',
+                companyType: '设计服务 · 20-50人',
+                companyDesc: '创意视觉工作室专注于为客户提供高品质的视觉设计服务，包括品牌设计、活动视觉设计、UI设计等。我们的团队由一群充满激情和创造力的设计师组成，致力于用设计创造价值。',
+                likes: 108
+            },
+            'model': {
+                title: '礼仪模特',
+                company: '优雅礼仪公司',
+                salary: '¥10K-20K/月',
+                type: '兼职',
+                location: '上海',
+                experience: '不限',
+                education: '中专',
+                highlights: [
+                    '工作时间灵活，可根据个人档期安排',
+                    '日薪高，多劳多得',
+                    '提供专业的礼仪培训',
+                    '接触高端活动和人脉资源'
+                ],
+                responsibilities: [
+                    '担任展会、发布会、晚宴等活动的礼仪接待和模特工作',
+                    '按照活动要求展示产品或提供礼仪服务',
+                    '保持良好的形象和专业的服务态度',
+                    '与活动方和团队成员保持良好沟通'
+                ],
+                requirements: [
+                    '女性身高168cm以上，男性身高180cm以上',
+                    '形象气质佳，举止优雅',
+                    '有责任心，工作认真负责',
+                    '有礼仪或模特经验者优先'
+                ],
+                workingHours: '根据活动安排，灵活调整',
+                workingLocation: '上海市各区，根据活动地点安排',
+                companyName: '优雅礼仪服务有限公司',
+                companyType: '商务服务 · 100-499人',
+                companyDesc: '优雅礼仪服务有限公司专业提供礼仪接待、模特展示、商务礼仪培训等服务。我们的团队由专业的礼仪人员和模特组成，为各类活动提供高质量的礼仪服务。',
+                likes: 89
+            },
+            'event-executive': {
+                title: '活动执行',
+                company: '环球活动策划',
+                salary: '¥20K-30K/月',
+                type: '全职',
+                location: '上海',
+                experience: '2-3年',
+                education: '本科',
+                highlights: [
+                    '有竞争力的薪资和绩效奖金',
+                    '完善的晋升机制和职业发展规划',
+                    '定期团队建设和员工活动',
+                    '五险一金，带薪年假'
+                ],
+                responsibilities: [
+                    '负责活动的现场执行和管理',
+                    '协调各部门和供应商，确保活动顺利进行',
+                    '解决活动现场的突发问题',
+                    '活动后进行总结和评估'
+                ],
+                requirements: [
+                    '本科及以上学历，2年以上活动执行经验',
+                    '具备良好的沟通协调能力和应变能力',
+                    '能够承受工作压力，有责任心',
+                    '熟练使用Office办公软件'
+                ],
+                workingHours: '周一至周五 9:00-18:00，活动期间需加班',
+                workingLocation: '上海市黄浦区南京东路829号',
+                companyName: '环球活动策划有限公司',
+                companyType: '广告传媒 · 500-999人',
+                companyDesc: '环球活动策划有限公司是一家专业的活动策划公司，致力于为客户提供全方位的活动解决方案。我们服务的客户涵盖IT、汽车、金融、消费品等多个行业，每年策划执行各类活动超过200场。',
+                likes: 112
+            }
+        };
+
+        // 获取当前职位ID
+        function getCurrentJobId() {
+            return sessionStorage.getItem('currentJobId') || 'show-director';
+        }
+
+        // 加载职位详情
+        function loadJobDetail() {
+            const jobId = getCurrentJobId();
+            const job = jobData[jobId] || jobData['show-director'];
+            
+            // 更新职位头部信息
+            const jobHeader = document.getElementById('jobHeader');
+            jobHeader.innerHTML = `
+                <h1 class="text-2xl font-bold text-white mb-2">${job.title}</h1>
+                <p class="text-neon-blue mb-4">${job.company}</p>
+                <div class="flex flex-wrap gap-3 mb-4">
+                    <span class="px-3 py-1 bg-neon-green/20 text-neon-green rounded-full text-sm">${job.salary}</span>
+                    <span class="px-3 py-1 bg-neon-blue/20 text-neon-blue rounded-full text-sm">${job.type}</span>
+                    <span class="px-3 py-1 bg-dark-base text-gray-300 rounded-full text-sm">${job.location}</span>
+                    <span class="px-3 py-1 bg-dark-base text-gray-300 rounded-full text-sm">${job.experience}</span>
+                    <span class="px-3 py-1 bg-dark-base text-gray-300 rounded-full text-sm">${job.education}</span>
+                </div>
+                
+                <!-- 互动按钮区域 -->
+                <div class="flex gap-4 mb-6">
+                    <button id="likeButton" class="flex-1 py-3 bg-dark-base border border-dark-border rounded-lg flex items-center justify-center gap-2 transition-all hover:border-neon-pink hover:bg-dark-card">
+                        <i class="fa fa-heart-o text-neon-pink"></i>
+                        <span>点赞</span>
+                        <span id="likeCount" class="text-neon-pink">${job.likes}</span>
+                    </button>
+                    <button id="collectButton" class="flex-1 py-3 bg-dark-base border border-dark-border rounded-lg flex items-center justify-center gap-2 transition-all hover:border-neon-yellow hover:bg-dark-card">
+                        <i class="fa fa-star-o text-neon-yellow"></i>
+                        <span>收藏</span>
+                    </button>
+                    <button id="shareButton" class="flex-1 py-3 bg-dark-base border border-dark-border rounded-lg flex items-center justify-center gap-2 transition-all hover:border-neon-blue hover:bg-dark-card">
+                        <i class="fa fa-share-alt text-neon-blue"></i>
+                        <span>分享</span>
+                    </button>
+                </div>
+            `;
+
+            // 更新职位亮点
+            const jobHighlights = document.getElementById('jobHighlights');
+            jobHighlights.innerHTML = job.highlights.map(highlight => `
+                <div class="flex items-start">
+                    <i class="fa fa-check text-neon-green mt-1 mr-3"></i>
+                    <span>${highlight}</span>
+                </div>
+            `).join('');
+
+            // 更新岗位职责
+            const jobResponsibilities = document.getElementById('jobResponsibilities');
+            jobResponsibilities.innerHTML = `
+                <h3 class="text-lg font-bold mb-3 text-neon-pink">岗位职责</h3>
+                <ul class="space-y-3">
+                    ${job.responsibilities.map((responsibility, index) => `
+                        <li class="flex items-start">
+                            <span class="inline-block w-5 h-5 rounded-full bg-neon-pink/20 text-neon-pink text-xs flex items-center justify-center mr-3 mt-0.5">${index + 1}</span>
+                            <span>${responsibility}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+
+            // 更新任职要求
+            const jobRequirements = document.getElementById('jobRequirements');
+            jobRequirements.innerHTML = `
+                <h3 class="text-lg font-bold mb-3 text-neon-blue">任职要求</h3>
+                <ul class="space-y-3">
+                    ${job.requirements.map((requirement, index) => `
+                        <li class="flex items-start">
+                            <span class="inline-block w-5 h-5 rounded-full bg-neon-blue/20 text-neon-blue text-xs flex items-center justify-center mr-3 mt-0.5">${index + 1}</span>
+                            <span>${requirement}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+
+            // 更新工作时间地点
+            const jobLocation = document.getElementById('jobLocation');
+            jobLocation.innerHTML = `
+                <h3 class="text-lg font-bold mb-3 text-neon-green">工作时间与地点</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start">
+                        <i class="fa fa-clock-o text-neon-green mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-bold">工作时间：</span>
+                            <span>${job.workingHours}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fa fa-map-marker text-neon-green mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-bold">工作地点：</span>
+                            <span>${job.workingLocation}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 更新公司介绍
+            const companyInfo = document.getElementById('companyInfo');
+            companyInfo.innerHTML = `
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-dark-card rounded-lg flex items-center justify-center mr-4">
+                        <span class="text-neon-blue text-2xl font-future">${job.company.substring(0, 2)}</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">${job.companyName}</h3>
+                        <p class="text-gray-400 text-sm">${job.companyType}</p>
+                    </div>
+                </div>
+                <p class="text-gray-300">${job.companyDesc}</p>
+            `;
+
+            // 更新推荐职位（根据当前职位类型推荐相关职位）
+            updateRecommendedJobs(jobId);
+
+            // 重新绑定事件监听器
+            bindEventListeners();
+        }
+
+        // 更新推荐职位
+        function updateRecommendedJobs(currentJobId) {
+            const recommendedJobs = document.getElementById('recommendedJobs');
+            let relatedJobs = [];
+            
+            // 根据当前职位类型筛选相关职位
+            if (currentJobId === 'show-director' || currentJobId === 'host' || currentJobId === 'dancer') {
+                // 舞台演绎相关职位
+                relatedJobs = ['creative-director', 'stage-designer'];
+            } else if (currentJobId === 'visual-designer') {
+                // 视觉设计相关职位
+                relatedJobs = ['ui-designer', 'graphic-designer'];
+            } else if (currentJobId === 'model') {
+                // 模特相关职位
+                relatedJobs = ['fashion-model', 'commercial-model'];
+            } else if (currentJobId === 'event-executive') {
+                // 活动执行相关职位
+                relatedJobs = ['event-planner', 'project-manager'];
+            }
+
+            // 如果没有相关职位，显示默认推荐
+            if (relatedJobs.length === 0) {
+                recommendedJobs.innerHTML = `
+                    <div class="p-4 bg-dark-card rounded-lg hover:border-neon-blue border border-dark-border cursor-pointer" onclick="viewRelatedJob('creative-director')">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-white">创意总监</h3>
+                                <p class="text-neon-blue text-sm">未来舞台娱乐</p>
+                            </div>
+                            <span class="text-neon-green">¥35K-50K/月</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-2 py-0.5 bg-dark-base rounded text-xs text-gray-300">创意策划</span>
+                            <span class="px-2 py-0.5 bg-dark-base rounded text-xs text-gray-300">团队管理</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-dark-card rounded-lg hover:border-neon-green border border-dark-border cursor-pointer" onclick="viewRelatedJob('stage-designer')">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-white">舞台设计师</h3>
+                                <p class="text-neon-green text-sm">未来舞台娱乐</p>
+                            </div>
+                            <span class="text-neon-green">¥20K-35K/月</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-2 py-0.5 bg-dark-base rounded text-xs text-gray-300">舞台设计</span>
+                            <span class="px-2 py-0.5 bg-dark-base rounded text-xs text-gray-300">3D建模</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // 生成推荐职位HTML
+                recommendedJobs.innerHTML = relatedJobs.map(jobKey => {
+                    // 这里使用模拟数据，实际应用中应该从数据库获取
+                    const mockJobs = {
+                        'creative-director': { title: '创意总监', company: '未来舞台娱乐', salary: '¥35K-50K/月', tags: ['创意策划', '团队管理'] },
+                        'stage-designer': { title: '舞台设计师', company: '未来舞台娱乐', salary: '¥20K-35K/月', tags: ['舞台设计', '3D建模'] },
+                        'ui-designer': { title: 'UI设计师', company: '数字创意公司', salary: '¥20K-30K/月', tags: ['UI设计', '用户体验'] },
+                        'graphic-designer': { title: '平面设计师', company: '广告创意工作室', salary: '¥15K-25K/月', tags: ['平面设计', '品牌设计'] },
+                        'fashion-model': { title: '时装模特', company: '时尚模特 agency', salary: '¥15K-30K/月', tags: ['时装表演', '形象代言'] },
+                        'commercial-model': { title: '商业模特', company: '广告模特公司', salary: '¥10K-20K/月', tags: ['产品展示', '广告拍摄'] },
+                        'event-planner': { title: '活动策划', company: '环球活动策划', salary: '¥18K-28K/月', tags: ['活动策划', '创意构思'] },
+                        'project-manager': { title: '项目经理', company: '企业活动管理', salary: '¥25K-35K/月', tags: ['项目管理', '团队协调'] }
+                    };
+                    const mockJob = mockJobs[jobKey];
+                    return `
+                        <div class="p-4 bg-dark-card rounded-lg hover:border-neon-blue border border-dark-border cursor-pointer" onclick="viewRelatedJob('${jobKey}')">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-white">${mockJob.title}</h3>
+                                    <p class="text-neon-blue text-sm">${mockJob.company}</p>
+                                </div>
+                                <span class="text-neon-green">${mockJob.salary}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                ${mockJob.tags.map(tag => `<span class="px-2 py-0.5 bg-dark-base rounded text-xs text-gray-300">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // 绑定事件监听器
+        function bindEventListeners() {
+            // 返回按钮 - 根据来源页面返回不同页面
+            document.getElementById('backButton').addEventListener('click', () => {
+                // 检查sessionStorage中是否有来源页面信息
+                const referrer = sessionStorage.getItem('jobDetailReferrer');
+                
+                // 根据来源页面决定返回地址
+                if (referrer === 'jobs-list.html') {
+                    // 如果从职位列表页来，返回职位列表页
+                    window.location.href = 'jobs-list.html';
+                } else if (referrer === 'index.html') {
+                    // 如果从首页来，返回首页
+                    window.location.href = 'index.html';
+                } else {
+                    // 默认返回首页
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // 点赞按钮
+            document.getElementById('likeButton').addEventListener('click', toggleLike);
+
+            // 收藏按钮
+            document.getElementById('collectButton').addEventListener('click', toggleCollect);
+
+            // 分享按钮
+            document.getElementById('shareButton').addEventListener('click', shareJob);
+
+            // 立即申请按钮
+            document.getElementById('applyButton').addEventListener('click', applyForJob);
+        }
+
+        // 切换点赞状态
+        function toggleLike() {
+            const likeButton = document.getElementById('likeButton');
+            const likeIcon = likeButton.querySelector('i');
+            const likeCount = document.getElementById('likeCount');
+            const currentCount = parseInt(likeCount.textContent);
+            
+            if (likeIcon.classList.contains('fa-heart-o')) {
+                // 点赞
+                likeIcon.classList.remove('fa-heart-o');
+                likeIcon.classList.add('fa-heart');
+                likeButton.classList.add('bg-neon-pink/20');
+                likeCount.textContent = currentCount + 1;
+                alert('点赞成功！');
+            } else {
+                // 取消点赞
+                likeIcon.classList.remove('fa-heart');
+                likeIcon.classList.add('fa-heart-o');
+                likeButton.classList.remove('bg-neon-pink/20');
+                likeCount.textContent = currentCount - 1;
+                alert('已取消点赞！');
+            }
+        }
+
+        // 切换收藏状态
+        function toggleCollect() {
+            const collectButton = document.getElementById('collectButton');
+            const collectIcon = collectButton.querySelector('i');
+            
+            if (collectIcon.classList.contains('fa-star-o')) {
+                // 收藏
+                collectIcon.classList.remove('fa-star-o');
+                collectIcon.classList.add('fa-star');
+                collectButton.classList.add('bg-neon-yellow/20');
+                alert('收藏成功！');
+            } else {
+                // 取消收藏
+                collectIcon.classList.remove('fa-star');
+                collectIcon.classList.add('fa-star-o');
+                collectButton.classList.remove('bg-neon-yellow/20');
+                alert('已取消收藏！');
+            }
+        }
+
+        // 分享职位
+        function shareJob() {
+            alert('分享功能已触发！实际应用中可调用分享API。');
+        }
+
+        // 申请职位
+        function applyForJob() {
+            // 保存当前职位ID，以便在申请页面使用
+            const currentJobId = sessionStorage.getItem('currentJobId') || '1';
+            sessionStorage.setItem('currentJobId', currentJobId);
+            // 跳转到职位申请页面
+            window.location.href = 'job-application.html';
+        }
+
+        // 查看相关职位
+        function viewRelatedJob(jobId) {
+            sessionStorage.setItem('currentJobId', jobId);
+            // 刷新当前页面以加载新职位
+            location.reload();
+        }
+
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJobDetail();
+        });
+    </script>
+</body>
+</html>

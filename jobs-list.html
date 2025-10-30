@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>职位列表 - 未来科技招聘平台</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        /* 移动端页面宽度铺满 */
+        body {
+            width: 100%;
+            margin: 0;
+            position: relative;
+        }
+        /* 确保main内容区域也铺满宽度 */
+        main {
+            width: 100%;
+            margin: 0;
+        }
+    </style>
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            pink: '#ff2a6d',
+                            blue: '#05d9e8',
+                            green: '#01ffc3',
+                            yellow: '#fee440'
+                        },
+                        dark: {
+                            base: '#0d0221',
+                            card: '#1a0b2e',
+                            surface: '#2d1b50',
+                            border: '#5c27fe'
+                        }
+                    },
+                    fontFamily: {
+                        cyber: ['Rajdhani', 'sans-serif'],
+                        future: ['Orbitron', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%': { textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff2a6d, 0 0 20px #ff2a6d' },
+                            '100%': { textShadow: '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #05d9e8, 0 0 40px #05d9e8' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow-neon {
+                text-shadow: 0 0 5px currentColor;
+            }
+            .border-neon {
+                box-shadow: 0 0 5px currentColor;
+            }
+            .bg-noise {
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+                background-blend-mode: overlay;
+                background-size: 200px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(12px);
+                background-color: rgba(13, 2, 33, 0.7);
+            }
+            .hover-scale {
+                transition: transform 0.3s ease;
+            }
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+    
+    <!-- 额外字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 基础样式 */
+        body {
+            scroll-behavior: smooth;
+            background-color: #0d0221;
+        }
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a0b2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5c27fe;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff2a6d;
+        }
+    </style>
+</head>
+<body class="text-gray-100 bg-dark-base bg-noise font-cyber">
+    <!-- 顶部标题栏 -->
+    <header class="fixed top-0 w-full z-50 bg-dark-card border-b border-dark-border">
+        <div class="px-4 py-3 flex items-center justify-center">
+            <div class="text-white text-xl font-future font-bold tracking-wider">
+                全部职位
+            </div>
+        </div>
+    </header>
+
+    <!-- 搜索栏 -->
+    <section class="sticky top-14 z-40 bg-dark-surface py-4 border-b border-dark-border w-full">
+        <div class="px-4">
+            <div class="flex flex-col gap-4">
+                <!-- 地址栏和搜索框 -->
+                <div class="flex gap-3 w-full">
+                    <!-- 地址栏 -->
+                    <div class="relative w-1/4 min-w-20">
+                        <button class="w-full pl-3 pr-6 py-3 bg-dark-base border border-dark-border rounded-md text-left flex items-center justify-between focus:outline-none focus:border-neon-blue transition-colors">
+                            <span>上海市</span>
+                            <i class="fa fa-chevron-down text-xs"></i>
+                        </button>
+                    </div>
+                    <!-- 搜索框 -->
+                    <div class="relative w-3/4">
+                        <input type="text" id="searchInput" placeholder="搜索职位关键词..." 
+                               class="w-full pl-10 pr-4 py-3 bg-dark-base border border-dark-border rounded-md focus:outline-none focus:border-neon-blue transition-colors">
+                    </div>
+                </div>
+                <!-- 分类按钮 -->
+                <div class="overflow-x-auto pb-2 -mx-4 px-4">
+                    <div class="flex gap-3 min-w-max">
+                        <button class="px-4 py-2 bg-neon-blue text-white rounded-full hover-scale whitespace-nowrap" onclick="filterCategory('all')">全部</button>
+                        <button class="px-4 py-2 bg-dark-base text-gray-300 rounded-full hover:bg-dark-base/80 transition-colors hover-scale whitespace-nowrap" onclick="filterCategory('stage')">舞台演绎</button>
+                        <button class="px-4 py-2 bg-dark-base text-gray-300 rounded-full hover:bg-dark-base/80 transition-colors hover-scale whitespace-nowrap" onclick="filterCategory('visual')">视觉创作</button>
+                        <button class="px-4 py-2 bg-dark-base text-gray-300 rounded-full hover:bg-dark-base/80 transition-colors hover-scale whitespace-nowrap" onclick="filterCategory('service')">特色服务</button>
+                        <button class="px-4 py-2 bg-dark-base text-gray-300 rounded-full hover:bg-dark-base/80 transition-colors hover-scale whitespace-nowrap" onclick="filterCategory('activity')">活动支持</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 主内容区 -->
+    <main class="mt-[80px] pt-0 pb-24">
+        <!-- 职位类别标题 -->
+        <section class="px-4 mb-6">
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                <i class="fa fa-th-large text-neon-pink mr-2"></i>
+                职位分类
+            </h2>
+        </section>
+
+        <!-- 舞台演绎分类 -->
+        <section class="px-4 mb-8" data-category="stage">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-neon-pink flex items-center">
+                    <i class="fa fa-music mr-2"></i>
+                    舞台演绎
+                </h3>
+                <span class="text-gray-400 text-sm">共 <span class="text-neon-green">8</span> 个职位</span>
+            </div>
+            <div class="space-y-4">
+                <!-- 职位卡片 -->
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('show-director')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">秀导团队</h4>
+                            <p class="text-neon-blue text-sm">未来舞台娱乐</p>
+                        </div>
+                        <span class="text-neon-green">¥30K-45K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">全职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">3-5年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">本科</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-pink/20 text-neon-pink rounded text-xs">舞台导演</span>
+                            <span class="px-2 py-0.5 bg-neon-blue/20 text-neon-blue rounded text-xs">活动策划</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('show-director')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('host')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">主持人</h4>
+                            <p class="text-neon-green text-sm">星空活动策划</p>
+                        </div>
+                        <span class="text-neon-green">¥20K-30K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">兼职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">1-3年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">大专</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-yellow/20 text-neon-yellow rounded text-xs">主持</span>
+                            <span class="px-2 py-0.5 bg-neon-green/20 text-neon-green rounded text-xs">活动</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('host')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('dancer')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">舞蹈演员</h4>
+                            <p class="text-neon-pink text-sm">梦幻艺术团</p>
+                        </div>
+                        <span class="text-neon-green">¥15K-25K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">全职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">1-3年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">中专</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-blue/20 text-neon-blue rounded text-xs">舞蹈</span>
+                            <span class="px-2 py-0.5 bg-neon-pink/20 text-neon-pink rounded text-xs">表演</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('dancer')">查看详情</button>
+                    </div>
+                </div>
+                
+                <!-- 更多舞台演绎职位 -->
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('singer')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">歌手</h4>
+                            <p class="text-neon-green text-sm">星光娱乐</p>
+                        </div>
+                        <span class="text-neon-green">¥18K-35K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">全职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">2-4年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-yellow/20 text-neon-yellow rounded text-xs">演唱</span>
+                            <span class="px-2 py-0.5 bg-neon-pink/20 text-neon-pink rounded text-xs">音乐</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('singer')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('actor')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">演员</h4>
+                            <p class="text-neon-blue text-sm">梦想剧场</p>
+                        </div>
+                        <span class="text-neon-green">¥15K-30K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">兼职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-green/20 text-neon-green rounded text-xs">表演</span>
+                            <span class="px-2 py-0.5 bg-neon-pink/20 text-neon-pink rounded text-xs">戏剧</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('actor')">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 视觉创作分类 -->
+        <section class="px-4 mb-8" data-category="visual">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-neon-blue flex items-center">
+                    <i class="fa fa-paint-brush mr-2"></i>
+                    视觉创作
+                </h3>
+                <span class="text-gray-400 text-sm">共 <span class="text-neon-green">6</span> 个职位</span>
+            </div>
+            <div class="space-y-4">
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('visual-designer')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">视觉设计师</h4>
+                            <p class="text-neon-pink text-sm">创意视觉工作室</p>
+                        </div>
+                        <span class="text-neon-green">¥18K-28K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">全职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">2-4年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">本科</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-blue/20 text-neon-blue rounded text-xs">设计</span>
+                            <span class="px-2 py-0.5 bg-neon-green/20 text-neon-green rounded text-xs">视觉</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('visual-designer')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('photographer')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">摄影师</h4>
+                            <p class="text-neon-blue text-sm">光影摄影工作室</p>
+                        </div>
+                        <span class="text-neon-green">¥15K-30K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">全职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">1-3年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-yellow/20 text-neon-yellow rounded text-xs">摄影</span>
+                            <span class="px-2 py-0.5 bg-neon-pink/20 text-neon-pink rounded text-xs">影像</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('photographer')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('makeup-artist')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">化妆师</h4>
+                            <p class="text-neon-green text-sm">美丽妆容工作室</p>
+                        </div>
+                        <span class="text-neon-green">¥12K-25K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">兼职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">1-3年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-pink/20 text-neon-pink rounded text-xs">化妆</span>
+                            <span class="px-2 py-0.5 bg-neon-yellow/20 text-neon-yellow rounded text-xs">造型</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('makeup-artist')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('body-painter')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">彩绘师</h4>
+                            <p class="text-neon-pink text-sm">艺术彩绘工作室</p>
+                        </div>
+                        <span class="text-neon-green">¥15K-25K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">兼职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-blue/20 text-neon-blue rounded text-xs">彩绘</span>
+                            <span class="px-2 py-0.5 bg-neon-green/20 text-neon-green rounded text-xs">艺术</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('body-painter')">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 特色服务分类 -->
+        <section class="px-4 mb-8" data-category="service">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-neon-green flex items-center">
+                    <i class="fa fa-star mr-2"></i>
+                    特色服务
+                </h3>
+                <span class="text-gray-400 text-sm">共 <span class="text-neon-green">5</span> 个职位</span>
+            </div>
+            <div class="space-y-4">
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('model')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">礼仪模特</h4>
+                            <p class="text-neon-yellow text-sm">优雅礼仪公司</p>
+                        </div>
+                        <span class="text-neon-green">¥10K-20K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">兼职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">中专</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-pink/20 text-neon-pink rounded text-xs">模特</span>
+                            <span class="px-2 py-0.5 bg-neon-blue/20 text-neon-blue rounded text-xs">礼仪</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('model')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('magician')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">魔术师</h4>
+                            <p class="text-neon-blue text-sm">奇幻魔术团</p>
+                        </div>
+                        <span class="text-neon-green">¥15K-30K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">兼职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">3-5年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-yellow/20 text-neon-yellow rounded text-xs">魔术</span>
+                            <span class="px-2 py-0.5 bg-neon-green/20 text-neon-green rounded text-xs">表演</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('magician')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('mc')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">MC/DJ</h4>
+                            <p class="text-neon-green text-sm">夜生活娱乐</p>
+                        </div>
+                        <span class="text-neon-green">¥20K-40K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">兼职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">2-4年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-pink/20 text-neon-pink rounded text-xs">音乐</span>
+                            <span class="px-2 py-0.5 bg-neon-blue/20 text-neon-blue rounded text-xs">主持</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('mc')">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 活动支持分类 -->
+        <section class="px-4 mb-8" data-category="activity">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-neon-yellow flex items-center">
+                    <i class="fa fa-calendar mr-2"></i>
+                    活动支持
+                </h3>
+                <span class="text-gray-400 text-sm">共 <span class="text-neon-green">7</span> 个职位</span>
+            </div>
+            <div class="space-y-4">
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('event-executive')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">活动执行</h4>
+                            <p class="text-neon-blue text-sm">环球活动策划</p>
+                        </div>
+                        <span class="text-neon-green">¥20K-30K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">全职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">2-3年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">本科</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-green/20 text-neon-green rounded text-xs">活动</span>
+                            <span class="px-2 py-0.5 bg-neon-blue/20 text-neon-blue rounded text-xs">执行</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('event-executive')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('stage-manager')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">舞台监督</h4>
+                            <p class="text-neon-green text-sm">星光舞台制作</p>
+                        </div>
+                        <span class="text-neon-green">¥18K-28K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">全职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">3-5年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">大专</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-blue/20 text-neon-blue rounded text-xs">舞台</span>
+                            <span class="px-2 py-0.5 bg-neon-pink/20 text-neon-pink rounded text-xs">管理</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('stage-manager')">查看详情</button>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-dark-card rounded-lg border border-dark-border hover:border-neon-blue transition-all cursor-pointer" onclick="viewJobDetail('lighting-engineer')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">灯光师</h4>
+                            <p class="text-neon-yellow text-sm">光影舞台设备</p>
+                        </div>
+                        <span class="text-neon-green">¥15K-25K/月</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">全职</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">上海</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">2-4年</span>
+                        <span class="px-2 py-1 bg-dark-base rounded-full text-xs">不限</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-neon-yellow/20 text-neon-yellow rounded text-xs">灯光</span>
+                            <span class="px-2 py-0.5 bg-neon-blue/20 text-neon-blue rounded text-xs">技术</span>
+                        </div>
+                        <button class="text-neon-blue text-sm font-medium hover:text-neon-pink transition-colors" onclick="event.stopPropagation(); viewJobDetail('lighting-engineer')">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部固定导航栏 -->
+    <nav class="fixed bottom-0 w-full z-50 bg-dark-card border-t border-dark-border">
+        <div class="grid grid-cols-4 h-16">
+            <a href="index.html" class="flex flex-col items-center justify-center text-white hover:text-neon-pink transition-colors duration-300">
+                <i class="fa fa-home text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </a>
+            <a href="jobs-list.html" class="flex flex-col items-center justify-center text-neon-blue hover:text-neon-blue transition-colors duration-300">
+                <i class="fa fa-briefcase text-xl mb-1"></i>
+                <span class="text-xs">职位</span>
+            </a>
+            <a href="messages.html" class="flex flex-col items-center justify-center text-white hover:text-neon-green transition-colors duration-300">
+                <i class="fa fa-comment text-xl mb-1"></i>
+                <span class="text-xs">消息</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center justify-center text-white hover:text-neon-yellow transition-colors duration-300">
+                <i class="fa fa-user text-xl mb-1"></i>
+                <span class="text-xs">个人中心</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- JavaScript -->
+    <script>
+        // 查看职位详情
+        function viewJobDetail(jobId) {
+            sessionStorage.setItem('currentJobId', jobId);
+            // 设置来源页面为职位列表页
+            sessionStorage.setItem('jobDetailReferrer', 'jobs-list.html');
+            window.location.href = 'job-detail.html';
+        }
+
+        // 分类筛选
+        function filterCategory(category) {
+            // 更新按钮样式
+            const buttons = document.querySelectorAll('.overflow-x-auto button');
+            buttons.forEach(button => {
+                if (button.textContent.trim() === category.charAt(0).toUpperCase() + category.slice(1)) {
+                    button.classList.remove('bg-dark-base', 'text-gray-300');
+                    button.classList.add('bg-neon-blue', 'text-white');
+                } else if (category === 'all' && button.textContent.trim() === '全部') {
+                    button.classList.remove('bg-dark-base', 'text-gray-300');
+                    button.classList.add('bg-neon-blue', 'text-white');
+                } else {
+                    button.classList.remove('bg-neon-blue', 'text-white');
+                    button.classList.add('bg-dark-base', 'text-gray-300');
+                }
+            });
+
+            // 显示/隐藏对应类别的职位
+            const sections = document.querySelectorAll('section[data-category]');
+            if (category === 'all') {
+                sections.forEach(section => {
+                    section.style.display = 'block';
+                });
+            } else {
+                sections.forEach(section => {
+                    if (section.dataset.category === category) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            }
+            
+            // 滚动到页面顶部，确保用户可以看到筛选后的结果
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const jobCards = document.querySelectorAll('[data-category] .bg-dark-card');
+            
+            jobCards.forEach(card => {
+                const title = card.querySelector('h4').textContent.toLowerCase();
+                const company = card.querySelector('p').textContent.toLowerCase();
+                const tags = card.querySelectorAll('.rounded:not(.rounded-full)');
+                
+                let found = title.includes(searchTerm) || company.includes(searchTerm);
+                
+                tags.forEach(tag => {
+                    if (tag.textContent.toLowerCase().includes(searchTerm)) {
+                        found = true;
+                    }
+                });
+                
+                card.style.display = found ? 'block' : 'none';
+            });
+        });
+
+        // 移除了返回按钮相关代码
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以在这里添加页面初始化逻辑
+        });
+    </script>
+</body>
+</html>

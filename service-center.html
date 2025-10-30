@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>服务中心 - 未来科技招聘平台</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        /* 移动端页面宽度铺满 */
+        body {
+            width: 100%;
+            margin: 0;
+            position: relative;
+        }
+        /* 确保main内容区域也铺满宽度 */
+        main {
+            width: 100%;
+            margin: 0;
+        }
+    </style>
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            pink: '#ff2a6d',
+                            blue: '#05d9e8',
+                            green: '#01ffc3',
+                            yellow: '#fee440'
+                        },
+                        dark: {
+                            base: '#0d0221',
+                            card: '#1a0b2e',
+                            surface: '#2d1b50',
+                            border: '#5c27fe'
+                        }
+                    },
+                    fontFamily: {
+                        cyber: ['Rajdhani', 'sans-serif'],
+                        future: ['Orbitron', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%': { textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff2a6d, 0 0 20px #ff2a6d' },
+                            '100%': { textShadow: '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #05d9e8, 0 0 40px #05d9e8' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow-neon {
+                text-shadow: 0 0 5px currentColor;
+            }
+            .border-neon {
+                box-shadow: 0 0 5px currentColor;
+            }
+            .bg-noise {
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+                background-blend-mode: overlay;
+                background-size: 200px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(12px);
+                background-color: rgba(13, 2, 33, 0.7);
+            }
+            .hover-scale {
+                transition: transform 0.3s ease;
+            }
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+    
+    <!-- 额外字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 基础样式 */
+        body {
+            scroll-behavior: smooth;
+            background-color: #0d0221;
+        }
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a0b2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5c27fe;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff2a6d;
+        }
+    </style>
+</head>
+<body class="text-gray-100 bg-dark-base bg-noise font-cyber">
+    <!-- 顶部标题栏 -->
+    <header class="fixed top-0 w-full z-50 bg-dark-card border-b border-dark-border">
+        <div class="px-4 py-3 flex items-center">
+            <button class="mr-4 text-white" onclick="window.history.back()">
+                <i class="fa fa-arrow-left text-lg"></i>
+            </button>
+            <div class="text-white text-xl font-future font-bold tracking-wider flex-1 text-center">
+                服务中心
+            </div>
+            <div class="w-8"></div> <!-- 占位，保持标题居中 -->
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="mt-16 pt-4 pb-24 px-4">
+        <!-- 联系方式快捷入口 -->
+        <section class="flex justify-between mb-6 bg-dark-card rounded-xl p-4 border border-dark-border">
+            <a href="#" class="flex flex-col items-center justify-center bg-neon-pink/20 text-neon-pink rounded-lg p-3 w-[45%]">
+                <i class="fa fa-commenting text-2xl mb-2"></i>
+                <span class="text-sm font-medium">投诉商家</span>
+            </a>
+            <a href="#" class="flex flex-col items-center justify-center bg-neon-green/20 text-neon-green rounded-lg p-3 w-[45%]">
+                <i class="fa fa-comment text-2xl mb-2"></i>
+                <span class="text-sm font-medium">产品反馈</span>
+            </a>
+        </section>
+
+        <!-- 猜你想问 -->
+        <section class="mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-white">猜你想问</h2>
+                <button class="text-neon-blue text-sm flex items-center" id="refreshQuestions">
+                    <i class="fa fa-refresh mr-1"></i> 换一换
+                </button>
+            </div>
+            
+            <!-- FAQ列表 -->
+            <div class="space-y-4" id="faqContainer">
+                <!-- FAQ项1 -->
+                <div class="bg-dark-card rounded-xl p-4 border border-dark-border">
+                    <div class="flex items-start">
+                        <div class="bg-purple-500/20 text-purple-400 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5">
+                            <i class="fa fa-question text-xs"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-white mb-2">小任务提交后审核不通过怎么办</h3>
+                            <p class="text-sm text-gray-300 leading-relaxed">
+                                亲爱的团子，您可以进入青团社首页点击页面右下角"我的"--"小任务记录"--"已结束"，找到您被驳回的小任务点击"重新提交任务"进行操作即可。
+                            </p>
+                            <div class="mt-2 text-sm text-gray-400 leading-relaxed">
+                                <p class="font-medium text-gray-300">温馨提示：</p>
+                                <p>1、申诉时间为被驳回后的72小时内提交。</p>
+                                <p>2、申诉时请确认之前的图片是否正确，若有错误，请删除后重新上传。</p>
+                                <p>3、申诉审核时间为24小时。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ项2 -->
+                <div class="bg-dark-card rounded-xl p-4 border border-dark-border">
+                    <div class="flex items-start">
+                        <div class="bg-purple-500/20 text-purple-400 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5">
+                            <i class="fa fa-question text-xs"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-white mb-2">小任务提交后审核时间是多久</h3>
+                            <p class="text-sm text-gray-300 leading-relaxed">
+                                亲爱的团子，您提交的小任务都是由商家进行审核的哦，一般审核时间为24-48小时左右，您的此任务提交后等待审核结果即可，并且在等待的同时可以领取其他任务哦，审核结果可以进青团社首页点击：我的--小任务记录--待审核查看剩余审核时间及审核结果。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ项3 -->
+                <div class="bg-dark-card rounded-xl p-4 border border-dark-border">
+                    <div class="flex items-start">
+                        <div class="bg-purple-500/20 text-purple-400 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5">
+                            <i class="fa fa-question text-xs"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-white mb-2">加薪券怎么获得</h3>
+                            <p class="text-sm text-gray-300 leading-relaxed">
+                                亲爱的团子，目前加薪券活动已经结束，目前此版块已经反馈优化中，建议您后续关注其他优惠。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ项4 -->
+                <div class="bg-dark-card rounded-xl p-4 border border-dark-border">
+                    <div class="flex items-start">
+                        <div class="bg-purple-500/20 text-purple-400 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5">
+                            <i class="fa fa-question text-xs"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-white mb-2">任务完成后薪资还未到账</h3>
+                            <p class="text-sm text-gray-300 leading-relaxed">
+                                亲爱的团子，您的小任务审核完成后，薪资会立即到账哦，您可以进入青团社首页点击：我的--立即提现 进行查看您的工资明细或提现。
+                            </p>
+                            <div class="mt-2 text-sm text-gray-400 leading-relaxed">
+                                <p class="font-medium text-gray-300">温馨提示：</p>
+                                <p>1、提现金额不得低于10元。</p>
+                                <p>2、提现需要绑定银行卡进行实名认证哦！</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 查看更多按钮 -->
+                <button class="w-full bg-dark-card rounded-xl p-4 border border-dark-border text-neon-blue text-center flex items-center justify-center" id="viewMoreBtn">
+                    查看更多问题
+                    <i class="fa fa-angle-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部固定导航栏 -->
+    <footer class="fixed bottom-0 w-full bg-dark-card border-t border-dark-border">
+        <div class="grid grid-cols-4 gap-0 py-2">
+            <a href="index.html" class="flex flex-col items-center justify-center py-1 text-gray-400 hover:text-neon-green transition-colors">
+                <i class="fa fa-home text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </a>
+            <a href="jobs-list.html" class="flex flex-col items-center justify-center py-1 text-gray-400 hover:text-neon-green transition-colors">
+                <i class="fa fa-briefcase text-xl mb-1"></i>
+                <span class="text-xs">职位</span>
+            </a>
+            <a href="messages.html" class="flex flex-col items-center justify-center py-1 text-gray-400 hover:text-neon-green transition-colors">
+                <i class="fa fa-comment text-xl mb-1"></i>
+                <span class="text-xs">消息</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center justify-center py-1 text-neon-green">
+                <i class="fa fa-user text-xl mb-1"></i>
+                <span class="text-xs">我的</span>
+            </a>
+        </div>
+    </footer>
+
+    <!-- 在线咨询按钮 -->
+    <div class="fixed bottom-20 left-0 right-0 px-4">
+        <button class="w-full bg-neon-green text-dark-base py-3 rounded-xl font-bold text-lg hover:bg-neon-green/90 transition-colors" id="onlineConsultBtn">
+            在线咨询
+        </button>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('服务中心页面已加载 - 微信小程序H5适配版');
+            
+            // 换一换功能
+            document.getElementById('refreshQuestions').addEventListener('click', function() {
+                const faqContainer = document.getElementById('faqContainer');
+                // 添加一个加载动画效果
+                faqContainer.classList.add('opacity-50');
+                
+                setTimeout(() => {
+                    // 随机排序FAQ项（除了查看更多按钮）
+                    const faqItems = Array.from(faqContainer.children).filter(item => !item.id);
+                    const viewMoreBtn = document.getElementById('viewMoreBtn');
+                    
+                    // 移除所有FAQ项
+                    faqItems.forEach(item => faqContainer.removeChild(item));
+                    
+                    // 随机排序后重新添加
+                    shuffleArray(faqItems).forEach(item => faqContainer.appendChild(item));
+                    
+                    // 重新添加查看更多按钮
+                    faqContainer.appendChild(viewMoreBtn);
+                    
+                    // 恢复透明度
+                    faqContainer.classList.remove('opacity-50');
+                    
+                    // 显示换一换成功提示
+                    showToast('已为您推荐新的问题');
+                }, 300);
+            });
+            
+            // 查看更多问题
+            document.getElementById('viewMoreBtn').addEventListener('click', function() {
+                // 这里可以实现加载更多FAQ的逻辑
+                showToast('加载更多问题...');
+                // 模拟加载更多
+                setTimeout(() => {
+                    showToast('已加载全部问题');
+                }, 1000);
+            });
+            
+            // 在线咨询按钮
+            document.getElementById('onlineConsultBtn').addEventListener('click', function() {
+                showToast('正在连接客服，请稍候...');
+                // 这里可以实现跳转到在线客服的逻辑
+            });
+            
+            // 辅助函数：随机打乱数组
+            function shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+            
+            // 辅助函数：显示提示信息
+            function showToast(message) {
+                // 检查是否已存在toast
+                let toast = document.getElementById('toast');
+                if (toast) {
+                    clearTimeout(toast.timeout);
+                    document.body.removeChild(toast);
+                }
+                
+                // 创建新的toast
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'fixed top-1/4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-lg z-50 backdrop-blur-sm';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                // 设置自动消失
+                toast.timeout = setTimeout(() => {
+                    toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                    setTimeout(() => {
+                        if (document.body.contains(toast)) {
+                            document.body.removeChild(toast);
+                        }
+                    }, 300);
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

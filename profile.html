@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个人中心 - 未来科技招聘平台</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入Chart.js用于数据可视化 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <style>
+        /* 移动端页面宽度铺满 */
+        body {
+            width: 100%;
+            margin: 0;
+            position: relative;
+        }
+        /* 确保main内容区域也铺满宽度 */
+        main {
+            width: 100%;
+            margin: 0;
+        }
+    </style>
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            pink: '#ff2a6d',
+                            blue: '#05d9e8',
+                            green: '#01ffc3',
+                            yellow: '#fee440'
+                        },
+                        dark: {
+                            base: '#0d0221',
+                            card: '#1a0b2e',
+                            surface: '#2d1b50',
+                            border: '#5c27fe'
+                        }
+                    },
+                    fontFamily: {
+                        cyber: ['Rajdhani', 'sans-serif'],
+                        future: ['Orbitron', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%': { textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff2a6d, 0 0 20px #ff2a6d' },
+                            '100%': { textShadow: '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #05d9e8, 0 0 40px #05d9e8' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow-neon {
+                text-shadow: 0 0 5px currentColor;
+            }
+            .border-neon {
+                box-shadow: 0 0 5px currentColor;
+            }
+            .bg-noise {
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+                background-blend-mode: overlay;
+                background-size: 200px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(12px);
+                background-color: rgba(13, 2, 33, 0.7);
+            }
+            .hover-scale {
+                transition: transform 0.3s ease;
+            }
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+    
+    <!-- 额外字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-dark-base text-white min-h-screen">
+    <!-- 顶部标题栏 -->
+    <header class="fixed top-0 left-0 right-0 h-[50px] bg-dark-card border-b border-dark-border z-50 flex items-center">
+        <div class="flex-1 flex justify-center items-center">
+            <h1 class="text-xl font-bold">个人中心</h1>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="mt-[80px] pt-0 pb-24 px-4">
+        <!-- 用户信息卡片 -->
+        <div class="bg-gradient-to-br from-dark-card to-dark-surface rounded-xl p-6 mb-6 border border-dark-border">
+            <div class="flex items-center">
+                <div class="relative mr-4">
+                    <div class="w-16 h-16 rounded-full bg-neon-blue/20 border-2 border-neon-blue flex items-center justify-center overflow-hidden">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=麻子&backgroundColor=ff2a6d&backgroundType=gradientLinear">
+                    </div>
+                    <span class="absolute bottom-0 right-0 bg-neon-green text-dark-base text-xs font-bold px-2 py-0.5 rounded-full">在线</span>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-xl font-bold text-white">麻子</h2>
+                    <p class="text-gray-400 text-sm">35岁 | 求职者</p>
+                    <div class="flex items-center mt-2">
+                        <span class="bg-neon-pink/20 text-neon-pink text-xs px-2 py-0.5 rounded-full">ID: 87654321</span>
+                    </div>
+                </div>
+                <button class="bg-neon-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-neon-green transition-colors">
+                    <i class="fa fa-pencil mr-1"></i>编辑
+                </button>
+            </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="bg-dark-card rounded-xl p-4 mb-6 border border-dark-border">
+            <div class="grid grid-cols-4 gap-2">
+                <div class="flex flex-col items-center">
+                    <span class="text-xl font-bold text-white">1</span>
+                    <span class="text-xs text-gray-400">全部报名</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-xl font-bold text-neon-green">1</span>
+                    <span class="text-xs text-gray-400">待录取</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-xl font-bold text-gray-400">0</span>
+                    <span class="text-xs text-gray-400">已录取</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-xl font-bold text-gray-400">0</span>
+                    <span class="text-xs text-gray-400">已结束</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 竞争力评分 -->
+        <div class="bg-gradient-to-r from-blue-900 to-neon-blue/40 rounded-xl p-4 mb-6 border border-neon-blue/50">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-16 h-16 rounded-full bg-dark-base border-4 border-neon-green/50 flex items-center justify-center relative">
+                        <span class="text-2xl font-bold text-neon-green">30</span>
+                        <span class="absolute bottom-1 text-xs text-neon-green">简历分</span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-bold text-white">竞争力超过30%求职者</h3>
+                        <p class="text-sm text-gray-300">完善简历，录取率更高！</p>
+                    </div>
+                </div>
+                <a href="resume.html" class="bg-dark-base border border-neon-blue text-neon-blue px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-neon-blue/10 transition-colors">
+                    我的简历 <i class="fa fa-angle-right ml-1"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 快速填写 -->
+        <div class="bg-dark-card rounded-xl p-4 mb-6 border border-dark-border">
+            <h3 class="text-lg font-bold text-white mb-3 flex items-center">
+                <i class="fa fa-bolt text-neon-yellow mr-2"></i>快速填写
+            </h3>
+            <div class="grid grid-cols-1 gap-3">
+                <div class="flex items-center justify-between p-3 bg-dark-base rounded-lg border border-dark-border">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-neon-blue/20 flex items-center justify-center text-neon-blue">
+                            <i class="fa fa-user-circle"></i>
+                        </div>
+                        <span class="ml-3 text-gray-300">完善基础信息</span>
+                    </div>
+                    <button class="bg-neon-green text-dark-base px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-neon-green/80 transition-colors">
+                        去完善
+                    </button>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-dark-base rounded-lg border border-dark-border">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-neon-pink/20 flex items-center justify-center text-neon-pink">
+                            <i class="fa fa-heart"></i>
+                        </div>
+                        <span class="ml-3 text-gray-300">填写求职意向</span>
+                    </div>
+                    <button class="bg-neon-green text-dark-base px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-neon-green/80 transition-colors">
+                        去填写
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 我要招人 -->
+        <div class="bg-gradient-to-r from-purple-900 to-pink-900 rounded-xl p-4 mb-6 border border-dark-border">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 rounded-full bg-neon-pink/20 flex items-center justify-center text-neon-pink">
+                        <i class="fa fa-line-chart text-xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-lg font-bold text-white">我要招人</h3>
+                        <p class="text-sm text-gray-300">海量真实简历任你挑</p>
+                    </div>
+                </div>
+                <button class="bg-neon-pink text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-neon-pink/80 transition-colors">
+                    发布需求
+                </button>
+            </div>
+        </div>
+
+        <!-- 我的资产 -->
+        <div class="bg-dark-card rounded-xl p-4 mb-6 border border-dark-border">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white">我的资产</h3>
+                <button class="text-neon-blue text-sm flex items-center">
+                    去提现 <i class="fa fa-angle-right ml-1"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col items-center justify-center p-3 bg-dark-base rounded-lg border border-dark-border">
+                    <span class="text-3xl font-bold text-white">0.00</span>
+                    <span class="text-xs text-gray-400">工资余额（元）</span>
+                </div>
+                <div class="flex flex-col items-center justify-center p-3 bg-dark-base rounded-lg border border-dark-border">
+                    <span class="text-3xl font-bold text-white">0.00</span>
+                    <span class="text-xs text-gray-400">红包余额（元）</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 更多服务 -->
+        <div class="bg-dark-card rounded-xl p-4 mb-6 border border-dark-border">
+            <h3 class="text-lg font-bold text-white mb-4">更多服务</h3>
+            <div class="grid grid-cols-4 gap-4">
+                <div class="flex flex-col items-center">
+                    <a href="my-favorites.html" class="w-12 h-12 rounded-full bg-neon-yellow/20 flex items-center justify-center text-neon-yellow mb-1">
+                        <i class="fa fa-star"></i>
+                    </a>
+                    <a href="my-favorites.html" class="text-xs text-gray-300">我的收藏</a>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-neon-blue/20 flex items-center justify-center text-neon-blue mb-1">
+                        <i class="fa fa-exchange"></i>
+                    </div>
+                    <span class="text-xs text-gray-300">切换至招聘者</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <a href="service-center.html" class="w-12 h-12 rounded-full bg-neon-green/20 flex items-center justify-center text-neon-green mb-1">
+                        <i class="fa fa-headphones"></i>
+                    </a>
+                    <a href="service-center.html" class="text-xs text-gray-300">服务中心</a>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-neon-pink/20 flex items-center justify-center text-neon-pink mb-1">
+                        <i class="fa fa-cog"></i>
+                    </div>
+                    <span class="text-xs text-gray-300">用户设置</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 mb-1">
+                        <i class="fa fa-question-circle"></i>
+                    </div>
+                    <span class="text-xs text-gray-300">在线客服</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 mb-1">
+                        <i class="fa fa-shopping-bag"></i>
+                    </div>
+                    <span class="text-xs text-gray-300">金币商城</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 mb-1">
+                        <i class="fa fa-lightbulb-o"></i>
+                    </div>
+                    <span class="text-xs text-gray-300">防骗指南</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 mb-1">
+                        <i class="fa fa-weixin"></i>
+                    </div>
+                    <span class="text-xs text-gray-300">开启微信通知</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 安全提示 -->
+        <div class="bg-dark-card rounded-xl p-4 mb-6 border border-dark-border">
+            <h3 class="text-lg font-bold text-white mb-4">安全提示</h3>
+            <div class="grid grid-cols-4 gap-4">
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-neon-green/20 flex items-center justify-center text-neon-green mb-1">
+                        <i class="fa fa-money"></i>
+                    </div>
+                    <span class="text-xs text-center text-gray-300">资金防范</span>
+                    <span class="text-xs text-center text-gray-400">交易规范不被骗</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-neon-yellow/20 flex items-center justify-center text-neon-yellow mb-1">
+                        <i class="fa fa-umbrella"></i>
+                    </div>
+                    <span class="text-xs text-center text-gray-300">安全防范</span>
+                    <span class="text-xs text-center text-gray-400">参加面试需谨慎</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-neon-blue/20 flex items-center justify-center text-neon-blue mb-1">
+                        <i class="fa fa-shield"></i>
+                    </div>
+                    <span class="text-xs text-center text-gray-300">隐私防范</span>
+                    <span class="text-xs text-center text-gray-400">个人信息不外传</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-neon-pink/20 flex items-center justify-center text-neon-pink mb-1">
+                        <i class="fa fa-id-card"></i>
+                    </div>
+                    <span class="text-xs text-center text-gray-300">营业执照</span>
+                    <span class="text-xs text-center text-gray-400">人力资源许可证</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 版本信息 -->
+        <div class="text-center text-gray-500 text-xs pb-4">
+            <p>未来科技招聘平台 v1.0.0</p>
+            <p class="mt-1">© 2024 NEO-TECH. All rights reserved.</p>
+        </div>
+    </main>
+
+    <!-- 底部固定导航栏 -->
+    <nav class="fixed bottom-0 w-full z-50 bg-dark-card border-t border-dark-border">
+        <div class="grid grid-cols-4 h-16">
+            <a href="index.html" class="flex flex-col items-center justify-center text-white hover:text-neon-pink transition-colors duration-300">
+                <i class="fa fa-home text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </a>
+            <a href="jobs-list.html" class="flex flex-col items-center justify-center text-white hover:text-neon-blue transition-colors duration-300">
+                <i class="fa fa-briefcase text-xl mb-1"></i>
+                <span class="text-xs">职位</span>
+            </a>
+            <a href="messages.html" class="flex flex-col items-center justify-center text-white hover:text-neon-green transition-colors duration-300">
+                <i class="fa fa-comment text-xl mb-1"></i>
+                <span class="text-xs">消息</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center justify-center text-neon-yellow hover:text-neon-yellow transition-colors duration-300">
+                <i class="fa fa-user text-xl mb-1"></i>
+                <span class="text-xs">个人中心</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 快速创建简历弹窗 -->
+    <div id="resumeModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white w-[90%] max-w-md rounded-xl overflow-hidden">
+            <!-- 弹窗头部 -->
+            <div class="relative p-5">
+                <h3 class="text-xl font-bold text-center">
+                    <span class="text-red-500">快速</span>
+                    <span class="text-blue-500">创建简历</span>
+                </h3>
+                <p class="text-gray-500 text-sm text-center mt-1">简历的完善度影响您的高薪机会哦</p>
+                <button id="closeModal" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">
+                    <i class="fa fa-times text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- 弹窗内容 -->
+            <div class="p-4">
+                <!-- 头像上传 -->
+                <div class="border-b border-gray-200 pb-4 mb-4">
+                    <label class="block text-gray-700 mb-2">头像</label>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">点击上传头像</span>
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-500">
+                            <i class="fa fa-camera text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 姓名 -->
+                <div class="border-b border-gray-200 pb-4 mb-4">
+                    <label class="block text-gray-700 mb-2">
+                        <span class="text-red-500">*</span>姓名
+                    </label>
+                    <div class="flex items-center justify-between">
+                        <input type="text" value="麻子" class="flex-1 bg-gray-50 border border-gray-200 rounded-md px-3 py-2 text-gray-700" />
+                        <div class="flex items-center ml-4">
+                            <label class="flex items-center mr-4">
+                                <input type="radio" name="gender" class="mr-1" />
+                                <span class="text-gray-600">男生</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="gender" class="mr-1" />
+                                <span class="text-gray-600">女生</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 年龄 -->
+                <div class="border-b border-gray-200 pb-4 mb-4">
+                    <label class="block text-gray-700 mb-2">
+                        <span class="text-red-500">*</span>年龄
+                    </label>
+                    <div class="flex justify-between items-center">
+                        <input type="date" value="1990-01-01" class="flex-1 bg-gray-50 border border-gray-200 rounded-md px-3 py-2 text-gray-700" />
+                        <i class="fa fa-angle-right text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <!-- 身份 -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2">
+                        <span class="text-red-500">*</span>身份（可多选）
+                    </label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm hover:bg-gray-200 cursor-pointer flex items-center justify-center">
+                            <input type="checkbox" name="identity" value="custom" class="mr-1 hidden" />
+                            <span>+ 自定义</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm hover:bg-gray-200 cursor-pointer flex items-center justify-center">
+                            <input type="checkbox" name="identity" value="student" class="mr-1 hidden" />
+                            <span>学生党</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm hover:bg-gray-200 cursor-pointer flex items-center justify-center">
+                            <input type="checkbox" name="identity" value="office" class="mr-1 hidden" />
+                            <span>上班族</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm hover:bg-gray-200 cursor-pointer flex items-center justify-center">
+                            <input type="checkbox" name="identity" value="mother" class="mr-1 hidden" />
+                            <span>宝妈</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm hover:bg-gray-200 cursor-pointer flex items-center justify-center">
+                            <input type="checkbox" name="identity" value="freelance" class="mr-1 hidden" />
+                            <span>自由职业</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm hover:bg-gray-200 cursor-pointer flex items-center justify-center">
+                            <input type="checkbox" name="identity" value="unemployed" class="mr-1 hidden" />
+                            <span>待业</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 提示信息 -->
+                <p class="text-xs text-gray-500 text-center mb-6">
+                    — 出生日期不会展示给商家，仅用于劳务合同 —
+                </p>
+            </div>
+            
+            <!-- 保存按钮 -->
+            <div class="p-4">
+                <button id="saveResume" class="w-full bg-green-500 text-white font-medium py-3 rounded-lg text-center hover:bg-green-600 transition-colors duration-300">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 求职意向弹窗 -->
+    <div id="jobIntentModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white w-[90%] max-w-md rounded-xl overflow-hidden max-h-[90vh] overflow-y-auto">
+            <!-- 弹窗头部 -->
+            <div class="relative p-5">
+                <h3 class="text-xl font-bold text-center text-gray-800">想找的工作</h3>
+                <p class="text-gray-500 text-sm text-center mt-1">将根据你的选择，为你优化「推荐职位」</p>
+                <button id="closeJobIntentModal" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">
+                    <i class="fa fa-times text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- 弹窗内容 -->
+            <div class="p-5">
+                <!-- 能否长期工作 -->
+                <div class="mb-6">
+                    <h4 class="text-lg font-bold text-gray-800 mb-3">能否长期工作（3个月以上）？</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="radio" name="longTerm" value="yes" class="hidden" />
+                            <span>是</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="radio" name="longTerm" value="no" class="hidden" />
+                            <span>否</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 工作时段 -->
+                <div class="mb-6">
+                    <div class="flex items-center mb-3">
+                        <h4 class="text-lg font-bold text-gray-800">能接受的工作时段</h4>
+                        <span class="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">可多选</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="workTime" value="morning" class="hidden" />
+                            <span>早班</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="workTime" value="day" class="hidden" />
+                            <span>白班</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="workTime" value="night" class="hidden" />
+                            <span>晚班</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer col-span-3">
+                            <input type="checkbox" name="workTime" value="any" class="hidden" />
+                            <span>都可以</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 每周工作天数 -->
+                <div class="mb-6">
+                    <div class="flex items-center mb-3">
+                        <h4 class="text-lg font-bold text-gray-800">你想每周工作几天？</h4>
+                        <span class="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">可多选</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="workDays" value="1-2" class="hidden" />
+                            <span>1~2天</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="workDays" value="3-4" class="hidden" />
+                            <span>3~4天</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="workDays" value="5+" class="hidden" />
+                            <span>5天以上</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer col-span-3">
+                            <input type="checkbox" name="workDays" value="any" class="hidden" />
+                            <span>都可以</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 工作时间（工作日/周末等） -->
+                <div class="mb-6">
+                    <div class="flex items-center mb-3">
+                        <h4 class="text-lg font-bold text-gray-800">能接受的工作时间？</h4>
+                        <span class="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">可多选</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="workSchedule" value="weekday" class="hidden" />
+                            <span>工作日</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="workSchedule" value="weekend" class="hidden" />
+                            <span>周末节假日</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="workSchedule" value="holiday" class="hidden" />
+                            <span>寒暑假</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-4 py-3 text-center hover:bg-gray-200 cursor-pointer col-span-3">
+                            <input type="checkbox" name="workSchedule" value="any" class="hidden" />
+                            <span>都可以</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 工作行业 -->
+                <div class="mb-6">
+                    <div class="flex items-center mb-3">
+                        <h4 class="text-lg font-bold text-gray-800">你想工作的行业？</h4>
+                        <span class="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">可多选</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <!-- 行业选项 -->
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="waiter" class="hidden" />
+                            <span>服务生</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="cashier" class="hidden" />
+                            <span>导购/收银</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="kitchen" class="hidden" />
+                            <span>餐饮帮工</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="marketing" class="hidden" />
+                            <span>市场推广</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="customerService" class="hidden" />
+                            <span>客服话务</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="delivery" class="hidden" />
+                            <span>配送/物流</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="baker" class="hidden" />
+                            <span>烘焙店员</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="cleaner" class="hidden" />
+                            <span>酒店保洁</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="barista" class="hidden" />
+                            <span>咖啡师</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="teacher" class="hidden" />
+                            <span>助教/老师</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="foodService" class="hidden" />
+                            <span>餐饮服务</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="retail" class="hidden" />
+                            <span>超市零售</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="rider" class="hidden" />
+                            <span>骑手配送</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="it" class="hidden" />
+                            <span>IT互联网</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="tea" class="hidden" />
+                            <span>奶茶店员</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="training" class="hidden" />
+                            <span>职业培训</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="host" class="hidden" />
+                            <span>主播艺人</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="agent" class="hidden" />
+                            <span>代理推广</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="worker" class="hidden" />
+                            <span>普工</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="stock" class="hidden" />
+                            <span>理货员</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="sorter" class="hidden" />
+                            <span>分拣员</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="factory" class="hidden" />
+                            <span>工厂/保安</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="sales" class="hidden" />
+                            <span>销售</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="dataEntry" class="hidden" />
+                            <span>资料录入</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="editor" class="hidden" />
+                            <span>P图/剪辑</span>
+                        </label>
+                        <label class="bg-gray-100 text-gray-600 rounded-md px-3 py-2 text-sm text-center hover:bg-gray-200 cursor-pointer">
+                            <input type="checkbox" name="industry" value="custom" class="hidden" />
+                            <span>+</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 保存按钮 -->
+            <div class="p-4 sticky bottom-0 bg-white">
+                <button id="saveJobIntent" class="w-full bg-green-500 text-white font-medium py-3 rounded-lg text-center hover:bg-green-600 transition-colors duration-300">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('个人中心页面已加载 - 微信小程序H5适配版');
+            
+            // 获取模态框元素
+            const resumeModal = document.getElementById('resumeModal');
+            const jobIntentModal = document.getElementById('jobIntentModal');
+            const closeResumeModal = document.getElementById('closeModal');
+            const closeJobIntentModal = document.getElementById('closeJobIntentModal');
+            
+            // 打开简历模态框的函数
+            function openResumeModal() {
+                resumeModal.classList.remove('hidden');
+            }
+            
+            // 打开求职意向模态框的函数
+            function openJobIntentModal() {
+                jobIntentModal.classList.remove('hidden');
+            }
+            
+            // 关闭简历模态框的函数
+            function closeResumeModalFunc() {
+                resumeModal.classList.add('hidden');
+            }
+            
+            // 关闭求职意向模态框的函数
+            function closeJobIntentModalFunc() {
+                jobIntentModal.classList.add('hidden');
+            }
+            
+            // 为快速填写模块的按钮添加点击事件
+            const quickFillButtons = document.querySelectorAll(
+                '.bg-dark-card.rounded-xl.border.border-dark-border button.bg-neon-green'
+            );
+            
+            // 第一个按钮打开简历模态框，第二个按钮打开求职意向模态框
+            if (quickFillButtons.length > 0) {
+                quickFillButtons[0].addEventListener('click', openResumeModal); // 完善基础信息
+            }
+            if (quickFillButtons.length > 1) {
+                quickFillButtons[1].addEventListener('click', openJobIntentModal); // 填写求职意向
+            }
+            
+            // 为关闭按钮添加点击事件
+            closeResumeModal.addEventListener('click', closeResumeModalFunc);
+            closeJobIntentModal.addEventListener('click', closeJobIntentModalFunc);
+            
+            // 点击模态框外部关闭模态框
+            resumeModal.addEventListener('click', function(event) {
+                if (event.target === resumeModal) {
+                    closeResumeModalFunc();
+                }
+            });
+            
+            jobIntentModal.addEventListener('click', function(event) {
+                if (event.target === jobIntentModal) {
+                    closeJobIntentModalFunc();
+                }
+            });
+            
+            // 身份选择的多选功能
+            const identityLabels = document.querySelectorAll('input[name="identity"]').forEach(checkbox => {
+                const label = checkbox.parentElement;
+                
+                // 点击标签时切换选中状态
+                label.addEventListener('click', function() {
+                    checkbox.checked = !checkbox.checked;
+                    updateCheckboxStyle(checkbox, label);
+                });
+                
+                // 初始化样式
+                updateCheckboxStyle(checkbox, label);
+            });
+            
+            // 更新复选框标签样式的函数
+            function updateCheckboxStyle(checkbox, label) {
+                if (checkbox.checked) {
+                    label.classList.remove('bg-gray-100', 'text-gray-600');
+                    label.classList.add('bg-blue-100', 'text-blue-600', 'border-2', 'border-blue-500');
+                } else {
+                    label.classList.remove('bg-blue-100', 'text-blue-600', 'border-2', 'border-blue-500');
+                    label.classList.add('bg-gray-100', 'text-gray-600');
+                }
+            }
+            
+            // 保存按钮功能 - 简历信息
+            const saveResumeButton = document.getElementById('saveResume');
+            
+            saveResumeButton.addEventListener('click', function() {
+                // 获取表单数据
+                const nameInput = document.querySelector('input[type="text"]');
+                const genderInputs = document.querySelectorAll('input[name="gender"]');
+                const birthDateInput = document.querySelector('input[type="date"]');
+                const identityCheckboxes = document.querySelectorAll('input[name="identity"]:checked');
+                
+                // 收集选中的性别
+                let selectedGender = '';
+                genderInputs.forEach(input => {
+                    if (input.checked) {
+                        selectedGender = input.nextElementSibling.textContent;
+                    }
+                });
+                
+                // 收集选中的身份
+                const selectedIdentities = Array.from(identityCheckboxes).map(cb => cb.value);
+                
+                // 构建保存的数据对象（仅用于演示）
+                const resumeData = {
+                    name: nameInput.value,
+                    gender: selectedGender,
+                    birthDate: birthDateInput.value,
+                    identities: selectedIdentities
+                };
+                
+                // 显示保存成功提示（实际应用中这里会发送数据到服务器）
+                alert('保存成功！\n\n' + 
+                      '姓名: ' + resumeData.name + '\n' +
+                      '性别: ' + resumeData.gender + '\n' +
+                      '出生日期: ' + resumeData.birthDate + '\n' +
+                      '身份: ' + resumeData.identities.join(', '));
+                
+                // 关闭模态框
+                closeResumeModalFunc();
+            });
+            
+            // 保存按钮功能 - 求职意向
+            const saveJobIntentButton = document.getElementById('saveJobIntent');
+            
+            saveJobIntentButton.addEventListener('click', function() {
+                // 获取表单数据
+                const longTermRadios = document.querySelectorAll('input[name="longTerm"]');
+                const workTimeCheckboxes = document.querySelectorAll('input[name="workTime"]:checked');
+                const workDaysCheckboxes = document.querySelectorAll('input[name="workDays"]:checked');
+                const workScheduleCheckboxes = document.querySelectorAll('input[name="workSchedule"]:checked');
+                const industryCheckboxes = document.querySelectorAll('input[name="industry"]:checked');
+                
+                // 收集长期工作选项
+                let longTermOption = '';
+                longTermRadios.forEach(input => {
+                    if (input.checked) {
+                        longTermOption = input.value === 'yes' ? '是' : '否';
+                    }
+                });
+                
+                // 收集多选选项
+                const selectedWorkTime = Array.from(workTimeCheckboxes).map(cb => {
+                    const valueMap = {
+                        'morning': '早班',
+                        'day': '白班',
+                        'night': '晚班',
+                        'any': '都可以'
+                    };
+                    return valueMap[cb.value] || cb.value;
+                });
+                
+                const selectedWorkDays = Array.from(workDaysCheckboxes).map(cb => {
+                    const valueMap = {
+                        '1-2': '1~2天',
+                        '3-4': '3~4天',
+                        '5+': '5天以上',
+                        'any': '都可以'
+                    };
+                    return valueMap[cb.value] || cb.value;
+                });
+                
+                const selectedWorkSchedule = Array.from(workScheduleCheckboxes).map(cb => {
+                    const valueMap = {
+                        'weekday': '工作日',
+                        'weekend': '周末节假日',
+                        'holiday': '寒暑假',
+                        'any': '都可以'
+                    };
+                    return valueMap[cb.value] || cb.value;
+                });
+                
+                const selectedIndustries = Array.from(industryCheckboxes).map(cb => {
+                    const valueMap = {
+                        'waiter': '服务生',
+                        'cashier': '导购/收银',
+                        'kitchen': '餐饮帮工',
+                        'marketing': '市场推广',
+                        'customerService': '客服话务',
+                        'delivery': '配送/物流',
+                        'baker': '烘焙店员',
+                        'cleaner': '酒店保洁',
+                        'barista': '咖啡师',
+                        'teacher': '助教/老师',
+                        'foodService': '餐饮服务',
+                        'retail': '超市零售',
+                        'rider': '骑手配送',
+                        'it': 'IT互联网',
+                        'tea': '奶茶店员',
+                        'training': '职业培训',
+                        'host': '主播艺人',
+                        'agent': '代理推广',
+                        'worker': '普工',
+                        'stock': '理货员',
+                        'sorter': '分拣员',
+                        'factory': '工厂/保安',
+                        'sales': '销售',
+                        'dataEntry': '资料录入',
+                        'editor': 'P图/剪辑',
+                        'custom': '+ 自定义'
+                    };
+                    return valueMap[cb.value] || cb.value;
+                });
+                
+                // 构建保存的数据对象（仅用于演示）
+                const jobIntentData = {
+                    longTerm: longTermOption,
+                    workTime: selectedWorkTime,
+                    workDays: selectedWorkDays,
+                    workSchedule: selectedWorkSchedule,
+                    industries: selectedIndustries
+                };
+                
+                // 显示保存成功提示（实际应用中这里会发送数据到服务器）
+                alert('保存成功！\n\n' + 
+                      '能否长期工作: ' + jobIntentData.longTerm + '\n' +
+                      '工作时段: ' + jobIntentData.workTime.join(', ') + '\n' +
+                      '每周工作天数: ' + jobIntentData.workDays.join(', ') + '\n' +
+                      '工作时间: ' + jobIntentData.workSchedule.join(', ') + '\n' +
+                      '工作行业: ' + jobIntentData.industries.join(', '));
+                
+                // 关闭模态框
+                closeJobIntentModalFunc();
+            });
+            
+            // 为求职意向弹窗中的选项添加样式切换功能
+            function setupCheckboxStyling(checkboxName) {
+                const checkboxes = document.querySelectorAll(`input[name="${checkboxName}"]`);
+                checkboxes.forEach(checkbox => {
+                    const label = checkbox.parentElement;
+                    
+                    // 点击标签时切换选中状态
+                    label.addEventListener('click', function() {
+                        checkbox.checked = !checkbox.checked;
+                        updateCheckboxStyle(checkbox, label);
+                    });
+                    
+                    // 初始化样式
+                    updateCheckboxStyle(checkbox, label);
+                });
+            }
+            
+            // 为单选按钮添加样式切换功能
+            function setupRadioStyling(radioName) {
+                const radios = document.querySelectorAll(`input[name="${radioName}"]`);
+                radios.forEach(radio => {
+                    const label = radio.parentElement;
+                    
+                    // 点击标签时选中当前单选按钮
+                    label.addEventListener('click', function() {
+                        // 取消同组其他单选按钮的选中状态
+                        radios.forEach(r => {
+                            r.checked = false;
+                            updateRadioStyle(r, r.parentElement);
+                        });
+                        // 选中当前单选按钮
+                        radio.checked = true;
+                        updateRadioStyle(radio, label);
+                    });
+                    
+                    // 初始化样式
+                    updateRadioStyle(radio, label);
+                });
+            }
+            
+            // 更新单选按钮标签样式的函数
+            function updateRadioStyle(radio, label) {
+                if (radio.checked) {
+                    label.classList.remove('bg-gray-100', 'text-gray-600');
+                    label.classList.add('bg-green-100', 'text-green-600', 'border-2', 'border-green-500');
+                } else {
+                    label.classList.remove('bg-green-100', 'text-green-600', 'border-2', 'border-green-500');
+                    label.classList.add('bg-gray-100', 'text-gray-600');
+                }
+            }
+            
+            // 设置求职意向弹窗中的样式切换
+            setupRadioStyling('longTerm');
+            setupCheckboxStyling('workTime');
+            setupCheckboxStyling('workDays');
+            setupCheckboxStyling('workSchedule');
+            setupCheckboxStyling('industry');
+        });
+    </script>
+</body>
+</html>
